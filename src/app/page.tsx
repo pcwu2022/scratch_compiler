@@ -40,6 +40,24 @@ export default function Home() {
         }
     };
 
+    const runResult = async (jsCode: string) => {
+        const data = await eval(`((async () => {
+            const outputs = [];
+            const saveOutput = (...output) => {
+                outputs.push(...output)
+            }
+            ${jsCode.replaceAll("console.log(", "saveOutput(")}
+            const returnOutputs = [];
+            for (let output of outputs){
+                returnOutputs.push((typeof(output) === "string") ? output : JSON.stringify(output))
+            }
+            return returnOutputs;
+        })()).then((data) => JSON.stringify(data)).catch((error) => {console.error(error)})`);   
+        
+        setTerminalOutput(JSON.parse(data).join("\n"));
+        
+    }
+
     const handleCompile = async () => {
         setLoading(true);
         setResult(null);
@@ -61,8 +79,9 @@ export default function Home() {
 
             const data = await response.json();
             setResult(data.result);
-            setTerminalOutput(data.terminalOutput || '');
-            setCompiledResult(data.compiledResult || null);
+            await runResult(data.result);
+            // setTerminalOutput('')
+            setCompiledResult(data.result || null);
         } catch (error) {
             console.error('Error compiling:', error);
             setResult('Compilation failed.');

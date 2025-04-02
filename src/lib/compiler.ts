@@ -455,7 +455,7 @@ class CodeGenerator {
             
             if (eventType === 'flagClicked') {
                 this.write(`// When green flag clicked\n`);
-                this.write(`document.addEventListener('DOMContentLoaded', awync function() {\n`);
+                this.write(`document.addEventListener('DOMContentLoaded', async function() {\n`);
                 this.indent++;
                 
                 // If there's a next block, generate its code
