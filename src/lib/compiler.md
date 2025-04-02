@@ -161,3 +161,88 @@ const jsCode = compiler.compile(scratchCode);
 - Add support for multiple sprites
 - Implement graphics rendering
 - Add support for more Scratch events
+
+# Syntax List
+
+## Variable and List Operations
+
+| Syntax | Description |
+|--------|-------------|
+| `var name = value` | Declares a new variable with an initial value. |
+| `var name` | Declares a new variable with default value 0. |
+| `list name [item1, item2, ...]` | Creates a new list with initial values. |
+| `list name` | Creates a new empty list. |
+| `set name = value` | Sets a variable to a specific value. |
+| `change name value` | Increases a variable by the specified amount. |
+
+## Events
+
+| Syntax | Description |
+|--------|-------------|
+| `when flagClicked` | Executes the following blocks when the green flag is clicked. |
+| `when keyPressed KeyName` | Executes the following blocks when a specific key is pressed. |
+
+## Motion
+
+| Syntax | Description |
+|--------|-------------|
+| `move steps` | Moves the sprite forward by the specified number of steps in its current direction. |
+
+## Looks
+
+| Syntax | Description |
+|--------|-------------|
+| `say "message"` | Makes the sprite display a speech bubble with the specified message. |
+| `say "message" seconds` | Makes the sprite display a speech bubble for the specified duration in seconds. |
+
+## Control
+
+| Syntax | Description |
+|--------|-------------|
+| `wait seconds` | Pauses execution for the specified number of seconds. |
+| `repeat count` | Repeats the enclosed blocks a specific number of times. |
+| `if condition` | Executes the enclosed blocks only if the condition is true. |
+
+## Operators
+
+| Syntax | Description |
+|--------|-------------|
+| `(expression)` | Evaluates a mathematical or logical expression like `(x + y)` or `(score > 10)`. |
+| `+` | Addition operator used in expressions. |
+| `-` | Subtraction operator used in expressions. |
+| `*` | Multiplication operator used in expressions. |
+| `/` | Division operator used in expressions. |
+| `>` | Greater than comparison operator. |
+| `<` | Less than comparison operator. |
+| `=` | Equality comparison operator. |
+
+## Structure
+
+| Syntax | Description |
+|--------|-------------|
+| Indentation | Indicates block nesting, with each level of indentation representing blocks inside control structures. |
+| Sequential blocks | Blocks written one after another are executed in sequence. |
+
+## Examples
+
+```
+when flagClicked
+  say "Hello"
+  wait 1
+```
+This script displays "Hello" when the green flag is clicked, then waits for 1 second.
+
+```
+when keyPressed Space
+  if (score > 10)
+    say "Good job!"
+```
+This script displays "Good job!" when the space key is pressed, but only if the score is greater than 10.
+
+```
+when flagClicked
+  repeat 4
+    move 100
+    wait 0.5
+```
+This script makes the sprite move in four 100-step movements with half-second pauses between each movement.
