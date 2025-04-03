@@ -18,7 +18,8 @@ export default function CodeEditor() {
     const monacoInstance = useMonaco();
 
     useEffect(() => {
-        setCode(localStorage.getItem("scratchCode") ?? initialCode);
+        const storedCode = localStorage.getItem("scratchCode");
+        setCode(!storedCode ? initialCode : storedCode?.replaceAll("\n", "").replaceAll(" ", "") === "" ? initialCode : storedCode);
     }, []);
 
     useEffect(() => {
@@ -32,21 +33,16 @@ export default function CodeEditor() {
         }
     }, [monacoInstance]);
 
-    useEffect(() => {
-        if (editorRef.current) {
-            editorRef.current.onDidChangeModelContent(() => {
-                setCompiled(false);
-                localStorage.setItem("scratchCode", code);
-            });
-        }
-    }, [editorRef.current]);
-
     const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: any) => {
         editorRef.current = editor;
         if (monacoInstance) {
             monaco.editor.setModelLanguage(editor.getModel()!, 'scratchSyntax');
         }
     };
+
+    const saveCode = () => {
+        localStorage.setItem("scratchCode", code);
+    }
 
     const runResult = async (jsCode: string) => {
         const data = await eval(`((async () => {
@@ -72,6 +68,7 @@ export default function CodeEditor() {
     }
 
     const handleCompile = async () => {
+        saveCode();
         setLoading(true);
         setResult(null);
         setTerminalOutput('');
@@ -105,15 +102,13 @@ export default function CodeEditor() {
     };
 
     const handleRun = async () => {
-        if (!result){
-            return;
-        }
+        saveCode();
         setRunning(true);
         if (!compiled){
             await handleCompile();
-            if (!result){
-                return;
-            }
+        }
+        if (!result){
+            return;
         }
         await runResult(result);
         setRunning(false);
@@ -168,7 +163,11 @@ export default function CodeEditor() {
                                 cursorStyle: 'line',
                                 automaticLayout: true,
                             }}
-                            onChange={(value) => setCode(value || '')}
+                            onChange={(value) => {
+                                setCompiled(false);
+                                saveCode();
+                                setCode(value || '');
+                            }}
                             onMount={handleEditorDidMount}
                         />
                     </div>

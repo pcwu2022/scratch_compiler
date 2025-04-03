@@ -111,5 +111,5 @@ export const languageSelector = (monacoInstance: typeof monaco): languages.Compl
 export const initialCode = `when flagClicked
     repeat 4
     move 10
-    wait 10
+    wait 1
 `;
