@@ -16,6 +16,7 @@ export class CodeGenerator {
     // Constructor: Initializes the CodeGenerator with the program (AST).
     constructor(program: Program) {
         this.program = program;
+        console.log(JSON.stringify(this.program));
     }
 
     // generate: Main method to generate the JavaScript code.
