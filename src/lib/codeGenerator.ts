@@ -46,7 +46,7 @@ export class CodeGenerator {
         this.output += `                const radians = this.direction * Math.PI / 180;\n`;
         this.output += `                this.x += steps * Math.cos(radians);\n`;
         this.output += `                this.y += steps * Math.sin(radians);\n`;
-        this.output += `                console.log(\`\${scratchRuntime.currentSprite} moved to (\${this.x}, \${this.y})\`);\n`;
+        this.output += `                console.log(\`\${scratchRuntime.currentSprite} moved to (\${Math.floor(this.x)}, \${Math.floor(this.y)})\`);\n`;
         this.output += `            }\n`;
         this.output += `        };\n`;
         this.output += `    }\n`;
