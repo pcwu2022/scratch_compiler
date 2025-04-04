@@ -16,11 +16,11 @@ export class ScratchTextCompiler {
             enabled: true,
             logLevels: ['info', 'warn', 'error'],
             saveToFile: true,
-            filePath: '../debug/compilerOutput.json',
+            filePath: 'src/app/debug/compilerOutput.json',
         });
     }
     // compile: Main method that takes Scratch-like text code as input and returns JavaScript code.
-    compile(code: string): string {
+    compile(code: string): { js: string, html: string, error?: string } {
         try {
             // Step 1: Tokenize the input using the Lexer.
             // The Lexer converts the raw text input into an array of tokens,
@@ -52,21 +52,21 @@ export class ScratchTextCompiler {
             // Handle any errors that occur during compilation.
             console.error('Compilation error:', error);
             // Return an error message as a comment in the JavaScript output.
-            return `// Compilation error: ${error instanceof Error ? error.message : String(error)}`;
+            return { js: '', html: '', error: `// Compilation error: ${error instanceof Error ? error.message : String(error)}`};
         }
     }
 }
 
 // compile: Asynchronous function that wraps the compiler and handles potential errors.
 // This function is designed to be used in an asynchronous context, such as in a web environment.
-export async function compile(code: string): Promise<{ result: string } | { error: string }> {
+export async function compile(code: string): Promise<{ js: string, html:  string } | { error: string }> {
     try {
         // Create an instance of the ScratchTextCompiler.
         const compiler = new ScratchTextCompiler();
         // Call the compile method to generate JavaScript code.
-        const jsCode = compiler.compile(code);
+        const { js, html } = compiler.compile(code);
         // Return the generated code in a result object.
-        return { result: jsCode };
+        return { js: js, html:  html };
     } catch (error) {
         // Handle any errors that occur during the compilation process.
         console.error('Error in compile function:', error);

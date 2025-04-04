@@ -49,13 +49,13 @@ export class Lexer {
     tokenize(): Token[] {
         // Loop through the code until the end is reached.
         while (this.position < this.code.length) {
-            // Get the current character at the current position.
-            const char = this.code[this.position];
-
             // Process indentation at the beginning of each line
             if (this.column === 1) {
                 this.handleIndentation();
             }
+
+            // Get the current character at the current position.
+            const char = this.code[this.position];
 
             // Check the type of the current character and process accordingly
             if ([' ', '\t'].includes(char)) {
@@ -109,6 +109,7 @@ export class Lexer {
 
     // Process indentation at the beginning of a line
     private handleIndentation(): void {
+        // console.log("Indent starting at ", `[${this.code[this.position]}]${this.code.substring(this.position+1, Math.min(this.position+20, this.code.length))}`)
         let spaces = 0;
         
         // Count the leading spaces and tabs (tabs count as 4 spaces)
@@ -153,6 +154,7 @@ export class Lexer {
 
     // Handle newline characters (\n or \r\n)
     private handleNewline(): void {
+        // console.log("NEW LINE!");
         // Skip carriage return in \r\n
         if (this.code[this.position] === '\r') {
             this.advance();
@@ -227,6 +229,7 @@ export class Lexer {
 
     // Extract a numeric literal from the input code.
     private extractNumber(): void {
+        // console.log("Number starts at: ", this.code[this.position]);
         let start = this.position;
         let value = '';
         let isFloat = false;
@@ -268,9 +271,15 @@ export class Lexer {
         this.addToken(TokenType.OPERATOR, value);
     }
 
-    // Extract an identifier or keyword
+    // Extract an identifier or keyword - FIXED
     private extractIdentifier(): void {
+        // console.log("Starting identifier at:", this.code[this.position]);
+        // console.log("Full code: \n", this.code);
         let value = '';
+        
+        // Start with the current character - this was missing the first character
+        // value += this.code[this.position];
+        // this.advance();
         
         // Collect valid identifier characters (letters, digits, underscores)
         while (this.position < this.code.length && 
@@ -303,6 +312,7 @@ export class Lexer {
     private advance(): void {
         this.position++;
         this.column++;
+        // console.log("Next char: ", this.code[this.position]);
     }
 
     // Peek at the next character without advancing

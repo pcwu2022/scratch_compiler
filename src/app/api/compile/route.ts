@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: compilationResult.error }, { status: 500 });
     }
 
-    return NextResponse.json({ result: compilationResult.result });
+    return NextResponse.json({ js: compilationResult.js, html: compilationResult.html });
   } catch (error) {
     console.error('Error in API route:', error);
     return NextResponse.json({ error: 'API route failed.' }, { status: 500 });

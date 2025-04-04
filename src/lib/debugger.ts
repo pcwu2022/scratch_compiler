@@ -1,3 +1,6 @@
+import { promises as fs } from 'fs';
+import path from 'path';
+
 interface DebugOptions {
     enabled: boolean;
     logLevels?: string[]; // e.g., ['info', 'warn', 'error']
@@ -21,7 +24,7 @@ class Debugger {
             enabled: options.enabled,
             logLevels: options.logLevels || ['info', 'warn', 'error'],
             saveToFile: options.saveToFile || false,
-            filePath: options.filePath || './debug/debug.json',
+            filePath: options.filePath || '../debug/debug.json',
         };
     }
   
@@ -47,7 +50,7 @@ class Debugger {
   
         this.logs.push(logEntry);
   
-        console.log(`[${logEntry.timestamp}] ${level.toUpperCase()}:`, message, context ? context : '');
+        // console.log(`[${logEntry.timestamp}] ${level.toUpperCase()}:`, message, context ? context : '');
   
         if (this.options.saveToFile) {
             this.saveLogsToFile();
@@ -76,13 +79,12 @@ class Debugger {
         }
   
         try {
-            const fs = (await import('fs/promises')).default;
-            const path = (await import('path')).default;
   
             const directory = path.dirname(this.options.filePath);
   
             await fs.mkdir(directory, { recursive: true });
             await fs.writeFile(this.options.filePath, JSON.stringify(this.logs, null, 2));
+            console.log('Saved file to: ', this.options.filePath);
         } catch (error) {
             console.error('Error saving logs to file:', error);
         }

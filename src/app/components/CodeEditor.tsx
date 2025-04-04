@@ -88,13 +88,13 @@ export default function CodeEditor() {
             }
 
             const data = await response.json();
-            setResult(data.result);
+            setResult(data.js);
             // setTerminalOutput('')
-            setCompiledResult(data.result || null);
+            setCompiledResult(data.js || null);
         } catch (error) {
             console.error('Error compiling:', error);
             setResult('Compilation failed.');
-            setTerminalOutput('Compilation failed.');
+            setTerminalOutput(String(error));
         } finally {
             setLoading(false);
             setCompiled(true);
