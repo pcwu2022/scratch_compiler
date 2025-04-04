@@ -3,7 +3,7 @@
 // and converts it into executable JavaScript code. It handles the generation of
 // runtime support functions, variable and list declarations, and script execution.
 
-import { Program, BlockNode } from "@/app/types/compilerTypes";
+import { Program, BlockNode } from "@/types/compilerTypes";
 
 export class CodeGenerator {
     // The program (AST) to generate code from.
