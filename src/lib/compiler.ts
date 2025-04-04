@@ -5,9 +5,20 @@
 import { Lexer } from "./lexer";
 import { Parser } from "./parser";
 import { CodeGenerator } from "./codeGenerator";
+import Debugger from './debugger';
 
 // Main compiler class
 export class ScratchTextCompiler {
+    public debugger: Debugger;
+
+    constructor() {
+        this.debugger = new Debugger({
+            enabled: true,
+            logLevels: ['info', 'warn', 'error'],
+            saveToFile: true,
+            filePath: '../debug/compilerOutput.json',
+        });
+    }
     // compile: Main method that takes Scratch-like text code as input and returns JavaScript code.
     compile(code: string): string {
         try {
@@ -17,17 +28,23 @@ export class ScratchTextCompiler {
             const lexer = new Lexer(code);
             const tokens = lexer.tokenize();
 
+            this.debugger.log("info", "Lexer output (tokens) ", tokens);
+
             // Step 2: Parse tokens into an Abstract Syntax Tree (AST) using the Parser.
             // The Parser takes the tokens and constructs an AST, which represents the
             // structure of the program in a hierarchical format.
             const parser = new Parser(tokens);
             const program = parser.parse();
 
+            this.debugger.log("info", "Parser output (program) ", program);
+
             // Step 3: Generate JavaScript code from the AST using the CodeGenerator.
             // The CodeGenerator traverses the AST and produces JavaScript code that
             // corresponds to the original Scratch-like input.
             const generator = new CodeGenerator(program);
             const jsCode = generator.generate();
+
+            this.debugger.log("info", "Generator output (jsCode) ", jsCode);
 
             // Return the generated JavaScript code.
             return jsCode;
