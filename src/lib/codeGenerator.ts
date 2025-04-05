@@ -8,9 +8,9 @@ export class CodeGenerator {
     // The program (AST) to generate code from
     private program: Program;
     // The generated JavaScript code output
-    private output: string = '';
+    private output: string = "";
     // HTML output for browser display
-    private htmlOutput: string = '';
+    private htmlOutput: string = "";
     // Current indentation level for code formatting
     private indent: number = 0;
     // Track if we're inside a function definition
@@ -26,19 +26,19 @@ export class CodeGenerator {
      * Main method to generate the JavaScript and HTML code
      * @returns Object containing JavaScript code and HTML
      */
-    generate(): { js: string, html: string } {
+    generate(): { js: string; html: string } {
         // First pass to collect all custom procedures
         this.collectProcedures();
-        
+
         // Generate the JavaScript code
         this.generateJavaScript();
-        
+
         // Generate the HTML wrapper
         this.generateHTML();
-        
+
         return {
             js: this.output,
-            html: this.htmlOutput
+            html: this.htmlOutput,
         };
     }
 
@@ -46,8 +46,8 @@ export class CodeGenerator {
      * Collects all custom procedures defined in the program
      */
     private collectProcedures(): void {
-        this.program.scripts.forEach(script => {
-            script.blocks.forEach(block => {
+        this.program.scripts.forEach((script) => {
+            script.blocks.forEach((block) => {
                 this.findProceduresInBlock(block);
             });
         });
@@ -57,12 +57,12 @@ export class CodeGenerator {
      * Recursively searches for procedure definitions in blocks
      */
     private findProceduresInBlock(block: BlockNode): void {
-        if (block.type === 'custom' && block.name === 'defineFunction') {
+        if (block.type === "custom" && block.name === "defineFunction") {
             const procedureName = block.args[0] as string;
             const parameters = block.args.slice(1) as string[];
             this.procedures.set(procedureName, parameters);
         }
-        
+
         // Check next block in sequence
         if (block.next) {
             this.findProceduresInBlock(block.next);
@@ -75,16 +75,16 @@ export class CodeGenerator {
     private generateJavaScript(): void {
         // Add runtime support code
         this.generateRuntimeSupport();
-        
+
         // Generate code for variables
         this.generateVariablesCode();
-        
+
         // Generate code for lists
         this.generateListsCode();
-        
+
         // Generate code for custom procedures
         this.generateProceduresCode();
-        
+
         // Generate code for scripts
         this.generateScriptsCode();
     }
@@ -114,7 +114,7 @@ export class CodeGenerator {
         this.output += `            tempo: 60,\n`;
         this.output += `            volume: 100\n`;
         this.output += `        };\n\n`;
-        
+
         this.output += `        // Initialize default sprite\n`;
         this.output += `        this.sprites.Sprite1 = {\n`;
         this.output += `            x: 0,\n`;
@@ -252,7 +252,7 @@ export class CodeGenerator {
         this.output += `                console.log(\`\${scratchRuntime.currentSprite} size set to \${this.size}%\`);\n`;
         this.output += `            }\n`;
         this.output += `        };\n\n`;
-        
+
         // Add utility functions
         this.output += `        // Register event handlers\n`;
         this.output += `        document.addEventListener('keydown', (e) => {\n`;
@@ -261,7 +261,7 @@ export class CodeGenerator {
         this.output += `                this.events[keyEvent].forEach(callback => callback());\n`;
         this.output += `            }\n`;
         this.output += `        });\n\n`;
-        
+
         this.output += `        // Create visual stage\n`;
         this.output += `        const stageDiv = document.getElementById('stage');\n`;
         this.output += `        if (stageDiv) {\n`;
@@ -271,7 +271,7 @@ export class CodeGenerator {
         this.output += `            stageDiv.style.position = 'relative';\n`;
         this.output += `            stageDiv.style.overflow = 'hidden';\n`;
         this.output += `            stageDiv.style.border = '2px solid black';\n\n`;
-        
+
         this.output += `            // Create sprite element\n`;
         this.output += `            const spriteDiv = document.createElement('div');\n`;
         this.output += `            spriteDiv.id = 'sprite-Sprite1';\n`;
@@ -286,7 +286,7 @@ export class CodeGenerator {
         this.output += `            stageDiv.appendChild(spriteDiv);\n`;
         this.output += `        }\n`;
         this.output += `    },\n\n`;
-        
+
         this.output += `    // Broadcasting system\n`;
         this.output += `    broadcast: function(message) {\n`;
         this.output += `        console.log(\`Broadcasting: \${message}\`);\n`;
@@ -294,7 +294,7 @@ export class CodeGenerator {
         this.output += `            this.broadcasts[message].forEach(callback => callback());\n`;
         this.output += `        }\n`;
         this.output += `    },\n\n`;
-        
+
         this.output += `    // Register a broadcast receiver\n`;
         this.output += `    onBroadcast: function(message, callback) {\n`;
         this.output += `        if (!this.broadcasts[message]) {\n`;
@@ -302,7 +302,7 @@ export class CodeGenerator {
         this.output += `        }\n`;
         this.output += `        this.broadcasts[message].push(callback);\n`;
         this.output += `    },\n\n`;
-        
+
         this.output += `    // Register an event handler\n`;
         this.output += `    onEvent: function(event, callback) {\n`;
         this.output += `        if (!this.events[event]) {\n`;
@@ -310,7 +310,7 @@ export class CodeGenerator {
         this.output += `        }\n`;
         this.output += `        this.events[event].push(callback);\n`;
         this.output += `    },\n\n`;
-        
+
         this.output += `    // Ask a question and get an answer\n`;
         this.output += `    ask: async function(question) {\n`;
         this.output += `        return new Promise((resolve) => {\n`;
@@ -324,41 +324,41 @@ export class CodeGenerator {
         this.output += `            askDiv.style.padding = '10px';\n`;
         this.output += `            askDiv.style.width = 'calc(100% - 40px)';\n`;
         this.output += `            askDiv.style.zIndex = '10';\n\n`;
-        
+
         this.output += `            const questionText = document.createElement('div');\n`;
         this.output += `            questionText.textContent = question;\n`;
         this.output += `            askDiv.appendChild(questionText);\n\n`;
-        
+
         this.output += `            const inputField = document.createElement('input');\n`;
         this.output += `            inputField.type = 'text';\n`;
         this.output += `            inputField.style.width = '100%';\n`;
         this.output += `            inputField.style.marginTop = '5px';\n`;
         this.output += `            askDiv.appendChild(inputField);\n\n`;
-        
+
         this.output += `            const submitButton = document.createElement('button');\n`;
         this.output += `            submitButton.textContent = 'Answer';\n`;
         this.output += `            submitButton.style.marginTop = '5px';\n`;
         this.output += `            askDiv.appendChild(submitButton);\n\n`;
-        
+
         this.output += `            submitButton.onclick = function() {\n`;
         this.output += `                scratchRuntime.answer = inputField.value;\n`;
         this.output += `                document.getElementById('stage').removeChild(askDiv);\n`;
         this.output += `                resolve(scratchRuntime.answer);\n`;
         this.output += `            };\n\n`;
-        
+
         this.output += `            // Allow pressing Enter to submit\n`;
         this.output += `            inputField.addEventListener('keypress', function(e) {\n`;
         this.output += `                if (e.key === 'Enter') {\n`;
         this.output += `                    submitButton.click();\n`;
         this.output += `                }\n`;
         this.output += `            });\n\n`;
-        
+
         this.output += `            document.getElementById('stage').appendChild(askDiv);\n`;
         this.output += `            inputField.focus();\n`;
         this.output += `        });\n`;
         this.output += `    }\n`;
         this.output += `};\n\n`;
-        
+
         // Initialize runtime
         this.output += `// Initialize the runtime\n`;
         this.output += `scratchRuntime.init();\n\n`;
@@ -371,9 +371,9 @@ export class CodeGenerator {
         this.output += `// Variables\n`;
         if (this.program.variables.size > 0) {
             this.program.variables.forEach((value, name) => {
-                if (typeof value === 'number') {
+                if (typeof value === "number") {
                     this.output += `scratchRuntime.variables["${name}"] = ${value};\n`;
-                } else if (typeof value === 'string') {
+                } else if (typeof value === "string") {
                     this.output += `scratchRuntime.variables["${name}"] = "${value}";\n`;
                 } else {
                     this.output += `scratchRuntime.variables["${name}"] = ${JSON.stringify(value)};\n`;
@@ -392,9 +392,7 @@ export class CodeGenerator {
         this.output += `// Lists\n`;
         if (this.program.lists.size > 0) {
             this.program.lists.forEach((values, name) => {
-                const formattedValues = values.map(v => 
-                    typeof v === 'number' ? v : `"${v}"`
-                ).join(', ');
+                const formattedValues = values.map((v) => (typeof v === "number" ? v : `"${v}"`)).join(", ");
                 this.output += `scratchRuntime.lists["${name}"] = [${formattedValues}];\n`;
             });
         } else {
@@ -410,7 +408,7 @@ export class CodeGenerator {
         this.output += `// Custom Procedures\n`;
         if (this.procedures.size > 0) {
             this.procedures.forEach((params, name) => {
-                const paramList = params.join(', ');
+                const paramList = params.join(", ");
                 this.output += `scratchRuntime.procedures["${name}"] = function(${paramList}) {\n`;
                 this.indent++;
                 this.write(`// Function body will be generated during script processing\n`);
@@ -430,7 +428,7 @@ export class CodeGenerator {
         this.output += `// Scripts\n`;
         this.program.scripts.forEach((script, index) => {
             this.output += `// Script ${index + 1}\n`;
-            script.blocks.forEach(block => {
+            script.blocks.forEach((block) => {
                 this.generateBlockCode(block);
             });
             this.output += `\n`;
@@ -442,34 +440,34 @@ export class CodeGenerator {
      */
     private generateBlockCode(block: BlockNode): void {
         switch (block.type) {
-            case 'event':
+            case "event":
                 this.generateEventBlock(block);
                 break;
-            case 'motion':
+            case "motion":
                 this.generateMotionBlock(block);
                 break;
-            case 'looks':
+            case "looks":
                 this.generateLooksBlock(block);
                 break;
-            case 'sound':
+            case "sound":
                 this.generateSoundBlock(block);
                 break;
-            case 'control':
+            case "control":
                 this.generateControlBlock(block);
                 break;
-            case 'sensing':
+            case "sensing":
                 this.generateSensingBlock(block);
                 break;
-            case 'operators':
+            case "operators":
                 this.write(this.generateOperatorsBlock(block));
                 break;
-            case 'variables':
+            case "variables":
                 this.generateVariablesBlock(block);
                 break;
-            case 'pen':
+            case "pen":
                 this.generatePenBlock(block);
                 break;
-            case 'custom':
+            case "custom":
                 this.generateCustomBlock(block);
                 break;
             default:
@@ -481,52 +479,48 @@ export class CodeGenerator {
      * Generates code for event blocks (when flag clicked, when key pressed, etc.)
      */
     private generateEventBlock(block: BlockNode): void {
-        if (block.name === 'when' && block.args[0] === 'flagClicked') {
+        if (block.name === "when" && block.args[0] === "flagClicked") {
             this.write(`// When green flag clicked\n`);
             this.write(`document.addEventListener('DOMContentLoaded', async function() {\n`);
             this.indent++;
-            
+
             // Generate code for the connected blocks
             if (block.next) {
                 this.generateBlockCode(block.next);
             }
-            
+
             this.indent--;
             this.write(`});\n\n`);
-        } 
-        else if (block.name === 'when' && typeof block.args[0] === 'string' && block.args[0].includes('keyPressed')) {
-            const key = (block.args[0] as string).replace('keyPressed', '').toLowerCase();
+        } else if (block.name === "when" && typeof block.args[0] === "string" && block.args[0].includes("keyPressed")) {
+            const key = (block.args[0] as string).replace("keyPressed", "").toLowerCase();
             this.write(`// When ${key} key pressed\n`);
             this.write(`scratchRuntime.onEvent("keyPressed${key}", async function() {\n`);
             this.indent++;
-            
+
             // Generate code for the connected blocks
             if (block.next) {
                 this.generateBlockCode(block.next);
             }
-            
+
             this.indent--;
             this.write(`});\n\n`);
-        }
-        else if (block.name === 'whenReceived') {
+        } else if (block.name === "whenReceived") {
             const message = this.formatArg(block.args[0]);
             this.write(`// When I receive ${message}\n`);
             this.write(`scratchRuntime.onBroadcast(${message}, async function() {\n`);
             this.indent++;
-            
+
             // Generate code for the connected blocks
             if (block.next) {
                 this.generateBlockCode(block.next);
             }
-            
+
             this.indent--;
             this.write(`});\n\n`);
-        }
-        else if (block.name === 'broadcast') {
+        } else if (block.name === "broadcast") {
             const message = this.formatArg(block.args[0]);
             this.write(`scratchRuntime.broadcast(${message});\n`);
-        }
-        else if (block.name === 'broadcastAndWait') {
+        } else if (block.name === "broadcastAndWait") {
             const message = this.formatArg(block.args[0]);
             this.write(`// Broadcast and wait (simplified implementation)\n`);
             this.write(`scratchRuntime.broadcast(${message});\n`);
@@ -544,32 +538,36 @@ export class CodeGenerator {
      */
     private generateMotionBlock(block: BlockNode): void {
         const sprite = `scratchRuntime.sprites[scratchRuntime.currentSprite]`;
-        
+
         switch (block.name) {
-            case 'move':
+            case "move":
                 const steps = this.formatArg(block.args[0]);
                 this.write(`${sprite}.move(${steps});\n`);
                 break;
-            case 'turnRight':
+            case "turnRight":
                 const degreesRight = this.formatArg(block.args[0]);
                 this.write(`${sprite}.turnRight(${degreesRight});\n`);
                 break;
-            case 'turnLeft':
+            case "turnLeft":
                 const degreesLeft = this.formatArg(block.args[0]);
                 this.write(`${sprite}.turnLeft(${degreesLeft});\n`);
                 break;
-            case 'pointInDirection':
+            case "pointInDirection":
                 const direction = this.formatArg(block.args[0]);
                 this.write(`${sprite}.pointInDirection(${direction});\n`);
                 break;
-            case 'goTo':
-                if (block.args[0] === 'random') {
+            case "goTo":
+                if (block.args[0] === "random") {
                     this.write(`// Go to random position\n`);
-                    this.write(`const randomX = Math.floor(Math.random() * scratchRuntime.stage.width) - (scratchRuntime.stage.width / 2);\n`);
-                    this.write(`const randomY = Math.floor(Math.random() * scratchRuntime.stage.height) - (scratchRuntime.stage.height / 2);\n`);
+                    this.write(
+                        `const randomX = Math.floor(Math.random() * scratchRuntime.stage.width) - (scratchRuntime.stage.width / 2);\n`
+                    );
+                    this.write(
+                        `const randomY = Math.floor(Math.random() * scratchRuntime.stage.height) - (scratchRuntime.stage.height / 2);\n`
+                    );
                     this.write(`${sprite}.goTo(randomX, randomY);\n`);
-                } else if (typeof block.args[0] === 'string' && block.args[0].startsWith('sprite:')) {
-                    const targetSprite = block.args[0].replace('sprite:', '');
+                } else if (typeof block.args[0] === "string" && block.args[0].startsWith("sprite:")) {
+                    const targetSprite = block.args[0].replace("sprite:", "");
                     this.write(`${sprite}.goToSprite("${targetSprite}");\n`);
                 } else {
                     const x = this.formatArg(block.args[0]);
@@ -577,23 +575,23 @@ export class CodeGenerator {
                     this.write(`${sprite}.goTo(${x}, ${y});\n`);
                 }
                 break;
-            case 'setX':
+            case "setX":
                 const x = this.formatArg(block.args[0]);
                 this.write(`${sprite}.goTo(${x}, ${sprite}.y);\n`);
                 break;
-            case 'setY':
+            case "setY":
                 const y = this.formatArg(block.args[0]);
                 this.write(`${sprite}.goTo(${sprite}.x, ${y});\n`);
                 break;
-            case 'changeX':
+            case "changeX":
                 const changeX = this.formatArg(block.args[0]);
                 this.write(`${sprite}.goTo(${sprite}.x + ${changeX}, ${sprite}.y);\n`);
                 break;
-            case 'changeY':
+            case "changeY":
                 const changeY = this.formatArg(block.args[0]);
                 this.write(`${sprite}.goTo(${sprite}.x, ${sprite}.y + ${changeY});\n`);
                 break;
-            case 'glide':
+            case "glide":
                 const seconds = this.formatArg(block.args[0]);
                 const targetX = this.formatArg(block.args[1]);
                 const targetY = this.formatArg(block.args[2]);
@@ -604,7 +602,7 @@ export class CodeGenerator {
                 this.write(`const targetY = ${targetY};\n`);
                 this.write(`const duration = ${seconds} * 1000;\n`);
                 this.write(`const startTime = Date.now();\n\n`);
-                
+
                 this.write(`await new Promise(resolve => {\n`);
                 this.indent++;
                 this.write(`function animate() {\n`);
@@ -614,7 +612,7 @@ export class CodeGenerator {
                 this.write(`const newX = startX + (targetX - startX) * progress;\n`);
                 this.write(`const newY = startY + (targetY - startY) * progress;\n`);
                 this.write(`${sprite}.goTo(newX, newY);\n\n`);
-                
+
                 this.write(`if (progress < 1) {\n`);
                 this.indent++;
                 this.write(`requestAnimationFrame(animate);\n`);
@@ -626,7 +624,7 @@ export class CodeGenerator {
                 this.write(`}\n`);
                 this.indent--;
                 this.write(`}\n\n`);
-                
+
                 this.write(`animate();\n`);
                 this.indent--;
                 this.write(`});\n`);
@@ -646,9 +644,9 @@ export class CodeGenerator {
      */
     private generateLooksBlock(block: BlockNode): void {
         const sprite = `scratchRuntime.sprites[scratchRuntime.currentSprite]`;
-        
+
         switch (block.name) {
-            case 'say':
+            case "say":
                 const message = this.formatArg(block.args[0]);
                 if (block.args.length > 1) {
                     const seconds = this.formatArg(block.args[1]);
@@ -657,7 +655,7 @@ export class CodeGenerator {
                     this.write(`${sprite}.say(${message});\n`);
                 }
                 break;
-            case 'think':
+            case "think":
                 const thought = this.formatArg(block.args[0]);
                 if (block.args.length > 1) {
                     const seconds = this.formatArg(block.args[1]);
@@ -667,21 +665,21 @@ export class CodeGenerator {
                     this.write(`${sprite}.say("💭 " + ${thought});\n`);
                 }
                 break;
-            case 'show':
+            case "show":
                 this.write(`${sprite}.show();\n`);
                 break;
-            case 'hide':
+            case "hide":
                 this.write(`${sprite}.hide();\n`);
                 break;
-            case 'changeSize':
+            case "changeSize":
                 const sizeChange = this.formatArg(block.args[0]);
                 this.write(`${sprite}.changeSize(${sizeChange});\n`);
                 break;
-            case 'setSize':
+            case "setSize":
                 const size = this.formatArg(block.args[0]);
                 this.write(`${sprite}.setSize(${size});\n`);
                 break;
-            case 'switchCostume':
+            case "switchCostume":
                 const costume = this.formatArg(block.args[0]);
                 this.write(`// Switch costume (simplified implementation)\n`);
                 this.write(`console.log(\`Switching costume to \${${costume}}\`);\n`);
@@ -701,22 +699,24 @@ export class CodeGenerator {
      */
     private generateSoundBlock(block: BlockNode): void {
         switch (block.name) {
-            case 'playSound':
+            case "playSound":
                 const sound = this.formatArg(block.args[0]);
                 this.write(`// Play sound (simplified implementation)\n`);
                 this.write(`console.log(\`Playing sound: \${${sound}}\`);\n`);
                 break;
-            case 'stopAllSounds':
+            case "stopAllSounds":
                 this.write(`// Stop all sounds (simplified implementation)\n`);
                 this.write(`console.log("Stopping all sounds");\n`);
                 break;
-            case 'changeVolume':
+            case "changeVolume":
                 const volumeChange = this.formatArg(block.args[0]);
                 this.write(`// Change volume (simplified implementation)\n`);
-                this.write(`scratchRuntime.stage.volume = Math.max(0, Math.min(100, scratchRuntime.stage.volume + ${volumeChange}));\n`);
+                this.write(
+                    `scratchRuntime.stage.volume = Math.max(0, Math.min(100, scratchRuntime.stage.volume + ${volumeChange}));\n`
+                );
                 this.write(`console.log(\`Volume changed to \${scratchRuntime.stage.volume}%\`);\n`);
                 break;
-            case 'setVolume':
+            case "setVolume":
                 const volume = this.formatArg(block.args[0]);
                 this.write(`// Set volume (simplified implementation)\n`);
                 this.write(`scratchRuntime.stage.volume = Math.max(0, Math.min(100, ${volume}));\n`);
@@ -737,109 +737,109 @@ export class CodeGenerator {
      */
     private generateControlBlock(block: BlockNode): void {
         switch (block.name) {
-            case 'wait':
+            case "wait":
                 const seconds = this.formatArg(block.args[0]);
                 this.write(`await new Promise(resolve => setTimeout(resolve, ${seconds} * 1000));\n`);
-                
+
                 // Process next block if it exists
                 if (block.next) {
                     this.generateBlockCode(block.next);
                 }
                 break;
-            case 'repeat':
+            case "repeat":
                 const count = this.formatArg(block.args[0]);
                 this.write(`// Repeat loop\n`);
                 this.write(`for (let i = 0; i < ${count}; i++) {\n`);
                 this.indent++;
-                
+
                 // Generate code for the blocks inside the loop body
                 // Bug fix: Process the nested block in args[1] instead of block.next
-                if (block.args.length > 1 && typeof block.args[1] === 'object') {
+                if (block.args.length > 1 && typeof block.args[1] === "object") {
                     const nestedBlock = block.args[1] as BlockNode;
                     this.generateBlockCode(nestedBlock);
-                    
+
                     // The previous fix didn't properly process nested blocks with their own "next" chains
                     // This is no longer needed as we're now handling the entire chain in generateBlockCode
                 }
-                
+
                 this.indent--;
                 this.write(`}\n`);
-                
+
                 // Process the next block after the repeat block if it exists
                 if (block.next) {
                     this.generateBlockCode(block.next);
                 }
                 break;
-            case 'forever':
+            case "forever":
                 this.write(`// Forever loop (using setInterval for browser compatibility)\n`);
                 this.write(`(async function forever() {\n`);
                 this.indent++;
-                
+
                 // Bug fix: Process the nested block in args[0] instead of block.next
-                if (block.args.length > 0 && typeof block.args[0] === 'object') {
+                if (block.args.length > 0 && typeof block.args[0] === "object") {
                     this.generateBlockCode(block.args[0] as BlockNode);
                 }
-                
+
                 this.write(`setTimeout(forever, 10); // Small delay to prevent UI freezing\n`);
                 this.indent--;
                 this.write(`})();\n`);
-                
+
                 // Process the next block if it exists
                 if (block.next) {
                     this.generateBlockCode(block.next);
                 }
                 break;
-            case 'if':
+            case "if":
                 const condition = this.formatArg(block.args[0]);
                 this.write(`// If statement\n`);
                 this.write(`if (${condition}) {\n`);
                 this.indent++;
-                
+
                 // Bug fix: Process the nested block in args[1] instead of block.next
-                if (block.args.length > 1 && typeof block.args[1] === 'object') {
+                if (block.args.length > 1 && typeof block.args[1] === "object") {
                     this.generateBlockCode(block.args[1] as BlockNode);
                 }
-                
+
                 this.indent--;
                 this.write(`}\n`);
-                
+
                 // Process the next block if it exists
                 if (block.next) {
                     this.generateBlockCode(block.next);
                 }
                 break;
-            case 'ifElse':
+            case "ifElse":
                 const ifCondition = this.formatArg(block.args[0]);
                 const thenBlock = block.args[1] as BlockNode;
                 const elseBlock = block.args[2] as BlockNode;
-                
+
                 this.write(`// If-Else statement\n`);
                 this.write(`if (${ifCondition}) {\n`);
                 this.indent++;
-                
+
                 // Generate code for the 'then' blocks
                 if (thenBlock) {
                     this.generateBlockCode(thenBlock);
                 }
-                
+
                 this.indent--;
                 this.write(`} else {\n`);
                 this.indent++;
-                
+
                 // Generate code for the 'else' blocks
                 if (elseBlock) {
                     this.generateBlockCode(elseBlock);
                 }
-                
+
                 this.indent--;
                 this.write(`}\n`);
-                
+
                 // Process the next block if it exists
                 if (block.next) {
                     this.generateBlockCode(block.next);
                 }
                 break;
-            case 'waitUntil':
+            case "waitUntil":
                 const waitCondition = this.formatArg(block.args[0]);
                 this.write(`// Wait until condition is true\n`);
                 this.write(`await new Promise(resolve => {\n`);
@@ -860,39 +860,39 @@ export class CodeGenerator {
                 this.write(`checkCondition();\n`);
                 this.indent--;
                 this.write(`});\n`);
-                
+
                 // Process the next block if it exists
                 if (block.next) {
                     this.generateBlockCode(block.next);
                 }
                 break;
-            case 'repeatUntil':
+            case "repeatUntil":
                 const repeatCondition = this.formatArg(block.args[0]);
                 this.write(`// Repeat until condition is true\n`);
                 this.write(`while (!(${repeatCondition})) {\n`);
                 this.indent++;
-                
+
                 // Bug fix: Process the nested block in args[1] instead of block.next
-                if (block.args.length > 1 && typeof block.args[1] === 'object') {
+                if (block.args.length > 1 && typeof block.args[1] === "object") {
                     this.generateBlockCode(block.args[1] as BlockNode);
                 }
-                
+
                 // Add a small delay to prevent browser from freezing
                 this.write(`await new Promise(resolve => setTimeout(resolve, 10));\n`);
                 this.indent--;
                 this.write(`}\n`);
-                
+
                 // Process the next block if it exists
                 if (block.next) {
                     this.generateBlockCode(block.next);
                 }
                 break;
-            case 'stop':
+            case "stop":
                 const target = block.args[0];
-                if (target === 'all') {
+                if (target === "all") {
                     this.write(`// Stop all (simplified implementation - just returns from current execution)\n`);
                     this.write(`return;\n`);
-                } else if (target === 'thisScript') {
+                } else if (target === "thisScript") {
                     this.write(`// Stop this script\n`);
                     this.write(`return;\n`);
                 } else {
@@ -910,20 +910,20 @@ export class CodeGenerator {
      */
     private generateSensingBlock(block: BlockNode): void {
         switch (block.name) {
-            case 'ask':
+            case "ask":
                 const question = this.formatArg(block.args[0]);
                 this.write(`// Ask a question and wait for answer\n`);
                 this.write(`await scratchRuntime.ask(${question});\n`);
                 break;
-            case 'answer':
+            case "answer":
                 this.write(`scratchRuntime.answer`);
                 break;
-            case 'touching':
+            case "touching":
                 const target = this.formatArg(block.args[0]);
                 this.write(`// Touching detection (simplified implementation)\n`);
                 this.write(`/* Simulating touch detection */\n`);
-                if (typeof block.args[0] === 'string' && block.args[0].startsWith('sprite:')) {
-                    const targetSprite = block.args[0].replace('sprite:', '');
+                if (typeof block.args[0] === "string" && block.args[0].startsWith("sprite:")) {
+                    const targetSprite = block.args[0].replace("sprite:", "");
                     this.write(`((sprite) => {\n`);
                     this.indent++;
                     this.write(`const dx = sprite.x - scratchRuntime.sprites["${targetSprite}"].x;\n`);
@@ -935,19 +935,23 @@ export class CodeGenerator {
                     this.write(`false /* Touch detection for ${target} not implemented */`);
                 }
                 break;
-            case 'keyPressed':
+            case "keyPressed":
                 const key = this.formatArg(block.args[0]);
                 this.write(`// Key pressed detection\n`);
                 this.write(`(() => {\n`);
                 this.indent++;
                 this.write(`const pressedKeys = {};\n`);
-                this.write(`document.addEventListener('keydown', (e) => { pressedKeys[e.key.toLowerCase()] = true; });\n`);
-                this.write(`document.addEventListener('keyup', (e) => { delete pressedKeys[e.key.toLowerCase()]; });\n`);
+                this.write(
+                    `document.addEventListener('keydown', (e) => { pressedKeys[e.key.toLowerCase()] = true; });\n`
+                );
+                this.write(
+                    `document.addEventListener('keyup', (e) => { delete pressedKeys[e.key.toLowerCase()]; });\n`
+                );
                 this.write(`return ${key}.toLowerCase() in pressedKeys;\n`);
                 this.indent--;
                 this.write(`})()`);
                 break;
-            case 'mouseDown':
+            case "mouseDown":
                 this.write(`// Mouse down detection\n`);
                 this.write(`(() => {\n`);
                 this.indent++;
@@ -958,7 +962,7 @@ export class CodeGenerator {
                 this.indent--;
                 this.write(`})()`);
                 break;
-            case 'mouseX':
+            case "mouseX":
                 this.write(`// Mouse X position (relative to stage center)\n`);
                 this.write(`(() => {\n`);
                 this.indent++;
@@ -978,7 +982,7 @@ export class CodeGenerator {
                 this.indent--;
                 this.write(`})()`);
                 break;
-            case 'mouseY':
+            case "mouseY":
                 this.write(`// Mouse Y position (relative to stage center)\n`);
                 this.write(`(() => {\n`);
                 this.indent++;
@@ -998,11 +1002,11 @@ export class CodeGenerator {
                 this.indent--;
                 this.write(`})()`);
                 break;
-            case 'timer':
+            case "timer":
                 this.write(`// Timer value (seconds since page load)\n`);
                 this.write(`((start) => (Date.now() - start) / 1000)(Date.now())`);
                 break;
-            case 'resetTimer':
+            case "resetTimer":
                 this.write(`// Reset timer (simplified implementation)\n`);
                 this.write(`console.log("Timer reset requested");\n`);
                 break;
@@ -1021,93 +1025,93 @@ export class CodeGenerator {
      */
     private generateOperatorsBlock(block: BlockNode): string {
         switch (block.name) {
-            case 'add':
+            case "add":
                 const addend1 = this.formatArg(block.args[0]);
                 const addend2 = this.formatArg(block.args[1]);
                 return `(Number(${addend1}) + Number(${addend2}))`;
-            case 'subtract':
+            case "subtract":
                 const minuend = this.formatArg(block.args[0]);
                 const subtrahend = this.formatArg(block.args[1]);
                 return `(Number(${minuend}) - Number(${subtrahend}))`;
-            case 'multiply':
+            case "multiply":
                 const factor1 = this.formatArg(block.args[0]);
                 const factor2 = this.formatArg(block.args[1]);
                 return `(Number(${factor1}) * Number(${factor2}))`;
-            case 'divide':
+            case "divide":
                 const dividend = this.formatArg(block.args[0]);
                 const divisor = this.formatArg(block.args[1]);
                 return `(Number(${dividend}) / Number(${divisor}))`;
-            case 'mod':
+            case "mod":
                 const modDividend = this.formatArg(block.args[0]);
                 const modDivisor = this.formatArg(block.args[1]);
                 return `(Number(${modDividend}) % Number(${modDivisor}))`;
-            case 'round':
+            case "round":
                 const roundValue = this.formatArg(block.args[0]);
                 return `Math.round(Number(${roundValue}))`;
-            case 'abs':
+            case "abs":
                 const absValue = this.formatArg(block.args[0]);
                 return `Math.abs(Number(${absValue}))`;
-            case 'floor':
+            case "floor":
                 const floorValue = this.formatArg(block.args[0]);
                 return `Math.floor(Number(${floorValue}))`;
-            case 'ceiling':
+            case "ceiling":
                 const ceilingValue = this.formatArg(block.args[0]);
                 return `Math.ceil(Number(${ceilingValue}))`;
-            case 'sqrt':
+            case "sqrt":
                 const sqrtValue = this.formatArg(block.args[0]);
                 return `Math.sqrt(Number(${sqrtValue}))`;
-            case 'sin':
+            case "sin":
                 const sinValue = this.formatArg(block.args[0]);
                 return `Math.sin(Number(${sinValue}) * Math.PI / 180)`;
-            case 'cos':
+            case "cos":
                 const cosValue = this.formatArg(block.args[0]);
                 return `Math.cos(Number(${cosValue}) * Math.PI / 180)`;
-            case 'tan':
+            case "tan":
                 const tanValue = this.formatArg(block.args[0]);
                 return `Math.tan(Number(${tanValue}) * Math.PI / 180)`;
-            case 'greater':
+            case "greater":
                 const greater1 = this.formatArg(block.args[0]);
                 const greater2 = this.formatArg(block.args[1]);
                 return `(Number(${greater1}) > Number(${greater2}))`;
-            case 'less':
+            case "less":
                 const less1 = this.formatArg(block.args[0]);
                 const less2 = this.formatArg(block.args[1]);
                 return `(Number(${less1}) < Number(${less2}))`;
-            case 'equals':
+            case "equals":
                 const equals1 = this.formatArg(block.args[0]);
                 const equals2 = this.formatArg(block.args[1]);
                 return `(${equals1} == ${equals2})`;
-            case 'and':
+            case "and":
                 const and1 = this.formatArg(block.args[0]);
                 const and2 = this.formatArg(block.args[1]);
                 return `(${and1} && ${and2})`;
-            case 'or':
+            case "or":
                 const or1 = this.formatArg(block.args[0]);
                 const or2 = this.formatArg(block.args[1]);
                 return `(${or1} || ${or2})`;
-            case 'not':
+            case "not":
                 const notValue = this.formatArg(block.args[0]);
                 return `!(${notValue})`;
-            case 'random':
+            case "random":
                 const min = this.formatArg(block.args[0]);
                 const max = this.formatArg(block.args[1]);
                 return `(Math.floor(Math.random() * (${max} - ${min} + 1)) + ${min})`;
-            case 'join':
+            case "join":
                 const string1 = this.formatArg(block.args[0]);
                 const string2 = this.formatArg(block.args[1]);
                 return `('' + ${string1} + ${string2})`;
-            case 'letterOf':
+            case "letterOf":
                 const letter = this.formatArg(block.args[0]);
                 const string = this.formatArg(block.args[1]);
                 return `String(${string}).charAt(${letter} - 1)`;
-            case 'length':
+            case "length":
                 const lengthString = this.formatArg(block.args[0]);
                 return `String(${lengthString}).length`;
-            case 'contains':
+            case "contains":
                 const containsString = this.formatArg(block.args[0]);
                 const substring = this.formatArg(block.args[1]);
                 return `String(${containsString}).includes(String(${substring}))`;
-            case 'expression':
+            case "expression":
                 const expression = this.formatArg(block.args[0]);
                 return `(${expression})`;
             default:
@@ -1120,17 +1124,19 @@ export class CodeGenerator {
      */
     private generateVariablesBlock(block: BlockNode): void {
         switch (block.name) {
-            case 'set':
+            case "set":
                 const varName = block.args[0];
                 const varValue = this.formatArg(block.args[1]);
                 this.write(`scratchRuntime.variables["${varName}"] = ${varValue};\n`);
                 break;
-            case 'change':
+            case "change":
                 const changeVarName = block.args[0];
                 const changeValue = this.formatArg(block.args[1]);
-                this.write(`scratchRuntime.variables["${changeVarName}"] = Number(scratchRuntime.variables["${changeVarName}"]) + Number(${changeValue});\n`);
+                this.write(
+                    `scratchRuntime.variables["${changeVarName}"] = Number(scratchRuntime.variables["${changeVarName}"]) + Number(${changeValue});\n`
+                );
                 break;
-            case 'showVariable':
+            case "showVariable":
                 const showVarName = block.args[0];
                 this.write(`// Show variable in the UI\n`);
                 this.write(`(() => {\n`);
@@ -1147,7 +1153,9 @@ export class CodeGenerator {
                 this.write(`newVarDisplay.style.backgroundColor = 'rgba(255,255,255,0.7)';\n`);
                 this.write(`newVarDisplay.style.padding = '5px';\n`);
                 this.write(`newVarDisplay.style.borderRadius = '5px';\n`);
-                this.write(`newVarDisplay.textContent = '${showVarName}: ' + scratchRuntime.variables["${showVarName}"];\n`);
+                this.write(
+                    `newVarDisplay.textContent = '${showVarName}: ' + scratchRuntime.variables["${showVarName}"];\n`
+                );
                 this.write(`document.getElementById('stage').appendChild(newVarDisplay);\n`);
                 this.indent--;
                 this.write(`} else {\n`);
@@ -1158,67 +1166,83 @@ export class CodeGenerator {
                 this.indent--;
                 this.write(`})();\n`);
                 break;
-            case 'hideVariable':
+            case "hideVariable":
                 const hideVarName = block.args[0];
                 this.write(`// Hide variable in the UI\n`);
                 this.write(`const varDisplay = document.getElementById('var-${hideVarName}');\n`);
                 this.write(`if (varDisplay) varDisplay.style.display = 'none';\n`);
                 break;
-            case 'addToList':
+            case "addToList":
                 const listName = block.args[0];
                 const itemValue = this.formatArg(block.args[1]);
                 this.write(`// Add item to list\n`);
                 this.write(`if (!scratchRuntime.lists["${listName}"]) scratchRuntime.lists["${listName}"] = [];\n`);
                 this.write(`scratchRuntime.lists["${listName}"].push(${itemValue});\n`);
                 break;
-            case 'deleteFromList':
+            case "deleteFromList":
                 const deleteListName = block.args[0];
                 const deleteIndex = this.formatArg(block.args[1]);
                 this.write(`// Delete item from list\n`);
-                this.write(`if (scratchRuntime.lists["${deleteListName}"] && ${deleteIndex} > 0 && ${deleteIndex} <= scratchRuntime.lists["${deleteListName}"].length) {\n`);
+                this.write(
+                    `if (scratchRuntime.lists["${deleteListName}"] && ${deleteIndex} > 0 && ${deleteIndex} <= scratchRuntime.lists["${deleteListName}"].length) {\n`
+                );
                 this.indent++;
                 this.write(`scratchRuntime.lists["${deleteListName}"].splice(${deleteIndex} - 1, 1);\n`);
                 this.indent--;
                 this.write(`}\n`);
                 break;
-            case 'insertInList':
+            case "insertInList":
                 const insertListName = block.args[0];
                 const insertValue = this.formatArg(block.args[1]);
                 const insertIndex = this.formatArg(block.args[2]);
                 this.write(`// Insert item in list\n`);
-                this.write(`if (!scratchRuntime.lists["${insertListName}"]) scratchRuntime.lists["${insertListName}"] = [];\n`);
-                this.write(`if (${insertIndex} > 0 && ${insertIndex} <= scratchRuntime.lists["${insertListName}"].length + 1) {\n`);
+                this.write(
+                    `if (!scratchRuntime.lists["${insertListName}"]) scratchRuntime.lists["${insertListName}"] = [];\n`
+                );
+                this.write(
+                    `if (${insertIndex} > 0 && ${insertIndex} <= scratchRuntime.lists["${insertListName}"].length + 1) {\n`
+                );
                 this.indent++;
-                this.write(`scratchRuntime.lists["${insertListName}"].splice(${insertIndex} - 1, 0, ${insertValue});\n`);
+                this.write(
+                    `scratchRuntime.lists["${insertListName}"].splice(${insertIndex} - 1, 0, ${insertValue});\n`
+                );
                 this.indent--;
                 this.write(`}\n`);
                 break;
-            case 'replaceInList':
+            case "replaceInList":
                 const replaceListName = block.args[0];
                 const replaceIndex = this.formatArg(block.args[1]);
                 const replaceValue = this.formatArg(block.args[2]);
                 this.write(`// Replace item in list\n`);
-                this.write(`if (scratchRuntime.lists["${replaceListName}"] && ${replaceIndex} > 0 && ${replaceIndex} <= scratchRuntime.lists["${replaceListName}"].length) {\n`);
+                this.write(
+                    `if (scratchRuntime.lists["${replaceListName}"] && ${replaceIndex} > 0 && ${replaceIndex} <= scratchRuntime.lists["${replaceListName}"].length) {\n`
+                );
                 this.indent++;
                 this.write(`scratchRuntime.lists["${replaceListName}"][${replaceIndex} - 1] = ${replaceValue};\n`);
                 this.indent--;
                 this.write(`}\n`);
                 break;
-            case 'itemOfList':
+            case "itemOfList":
                 const itemListName = block.args[0];
                 const itemIndex = this.formatArg(block.args[1]);
-                this.write(`(scratchRuntime.lists["${itemListName}"] && ${itemIndex} > 0 && ${itemIndex} <= scratchRuntime.lists["${itemListName}"].length ? scratchRuntime.lists["${itemListName}"][${itemIndex} - 1] : "")`);
-            case 'lengthOfList':
+                this.write(
+                    `(scratchRuntime.lists["${itemListName}"] && ${itemIndex} > 0 && ${itemIndex} <= scratchRuntime.lists["${itemListName}"].length ? scratchRuntime.lists["${itemListName}"][${itemIndex} - 1] : "")`
+                );
+            case "lengthOfList":
                 const lengthListName = block.args[0];
-                this.write(`(scratchRuntime.lists["${lengthListName}"] ? scratchRuntime.lists["${lengthListName}"].length : 0)`);
-            case 'listContains':
+                this.write(
+                    `(scratchRuntime.lists["${lengthListName}"] ? scratchRuntime.lists["${lengthListName}"].length : 0)`
+                );
+            case "listContains":
                 const containsListName = block.args[0];
                 const containsItem = this.formatArg(block.args[1]);
-                this.write(`(scratchRuntime.lists["${containsListName}"] ? scratchRuntime.lists["${containsListName}"].includes(${containsItem}) : false)`);
+                this.write(
+                    `(scratchRuntime.lists["${containsListName}"] ? scratchRuntime.lists["${containsListName}"].includes(${containsItem}) : false)`
+                );
             default:
                 this.write(`// Unsupported variables block: ${block.name}\n`);
         }
-        
+
         // Process next block if it exists
         if (block.next) {
             this.generateBlockCode(block.next);
@@ -1230,41 +1254,41 @@ export class CodeGenerator {
      */
     private generatePenBlock(block: BlockNode): void {
         const sprite = `scratchRuntime.sprites[scratchRuntime.currentSprite]`;
-        
+
         // If pen methods don't exist yet, add them
         if (!this.penMethodsAdded) {
             this.addPenMethods();
         }
-        
+
         switch (block.name) {
-            case 'penDown':
+            case "penDown":
                 this.write(`${sprite}.penDown();\n`);
                 break;
-            case 'penUp':
+            case "penUp":
                 this.write(`${sprite}.penUp();\n`);
                 break;
-            case 'setPenColor':
+            case "setPenColor":
                 const color = this.formatArg(block.args[0]);
                 this.write(`${sprite}.setPenColor(${color});\n`);
                 break;
-            case 'changePenSize':
+            case "changePenSize":
                 const sizeChange = this.formatArg(block.args[0]);
                 this.write(`${sprite}.changePenSize(${sizeChange});\n`);
                 break;
-            case 'setPenSize':
+            case "setPenSize":
                 const size = this.formatArg(block.args[0]);
                 this.write(`${sprite}.setPenSize(${size});\n`);
                 break;
-            case 'clear':
+            case "clear":
                 this.write(`${sprite}.clearPen();\n`);
                 break;
-            case 'stamp':
+            case "stamp":
                 this.write(`${sprite}.stamp();\n`);
                 break;
             default:
                 this.write(`// Unsupported pen block: ${block.name}\n`);
         }
-        
+
         // Process the next block if it exists
         if (block.next) {
             this.generateBlockCode(block.next);
@@ -1281,7 +1305,7 @@ export class CodeGenerator {
      */
     private addPenMethods(): void {
         this.penMethodsAdded = true;
-        
+
         // Add pen methods before the runtime init
         const penMethods = `
         // Add pen methods to the sprite prototype
@@ -1391,13 +1415,11 @@ export class CodeGenerator {
                 }
             }
         },`;
-        
+
         // Insert pen methods into the sprite definition
-        const insertPoint = this.output.lastIndexOf('};') - 1;
-        this.output = this.output.substring(0, insertPoint) + 
-                    penMethods + 
-                    this.output.substring(insertPoint);
-        
+        const insertPoint = this.output.lastIndexOf("};") - 1;
+        this.output = this.output.substring(0, insertPoint) + penMethods + this.output.substring(insertPoint);
+
         // Update move and goto methods to handle pen drawing
         this.updateMovementMethods();
     }
@@ -1407,31 +1429,29 @@ export class CodeGenerator {
      */
     private updateMovementMethods(): void {
         // Find and modify the move method to update pen drawing
-        const moveMethodPos = this.output.indexOf('move: function(steps)');
+        const moveMethodPos = this.output.indexOf("move: function(steps)");
         if (moveMethodPos > -1) {
-            const endOfMoveMethod = this.output.indexOf('},', moveMethodPos) + 2;
+            const endOfMoveMethod = this.output.indexOf("},", moveMethodPos) + 2;
             const moveMethod = this.output.substring(moveMethodPos, endOfMoveMethod);
             const updatedMoveMethod = moveMethod.replace(
-                'console.log(`${scratchRuntime.currentSprite} moved to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n',
-                'console.log(`${scratchRuntime.currentSprite} moved to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n                    this.updatePenDrawing();\n'
+                "console.log(`${scratchRuntime.currentSprite} moved to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n",
+                "console.log(`${scratchRuntime.currentSprite} moved to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n                    this.updatePenDrawing();\n"
             );
-            this.output = this.output.substring(0, moveMethodPos) + 
-                        updatedMoveMethod + 
-                        this.output.substring(endOfMoveMethod);
+            this.output =
+                this.output.substring(0, moveMethodPos) + updatedMoveMethod + this.output.substring(endOfMoveMethod);
         }
-        
+
         // Find and modify the goTo method to update pen drawing
-        const goToMethodPos = this.output.indexOf('goTo: function(x, y)');
+        const goToMethodPos = this.output.indexOf("goTo: function(x, y)");
         if (goToMethodPos > -1) {
-            const endOfGoToMethod = this.output.indexOf('},', goToMethodPos) + 2;
+            const endOfGoToMethod = this.output.indexOf("},", goToMethodPos) + 2;
             const goToMethod = this.output.substring(goToMethodPos, endOfGoToMethod);
             const updatedGoToMethod = goToMethod.replace(
-                'console.log(`${scratchRuntime.currentSprite} went to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n',
-                'console.log(`${scratchRuntime.currentSprite} went to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n                    this.updatePenDrawing();\n'
+                "console.log(`${scratchRuntime.currentSprite} went to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n",
+                "console.log(`${scratchRuntime.currentSprite} went to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n                    this.updatePenDrawing();\n"
             );
-            this.output = this.output.substring(0, goToMethodPos) + 
-                        updatedGoToMethod + 
-                        this.output.substring(endOfGoToMethod);
+            this.output =
+                this.output.substring(0, goToMethodPos) + updatedGoToMethod + this.output.substring(endOfGoToMethod);
         }
     }
 
@@ -1439,33 +1459,35 @@ export class CodeGenerator {
      * Generates code for custom blocks (procedures)
      */
     private generateCustomBlock(block: BlockNode): void {
-        if (block.name === 'defineFunction') {
+        if (block.name === "defineFunction") {
             // Define a custom procedure/function
             const functionName = block.args[0] as string;
             const paramList = block.args.slice(1) as string[];
-            
+
             this.write(`// Define custom procedure: ${functionName}\n`);
-            this.write(`scratchRuntime.procedures["${functionName}"] = function(${paramList.join(', ')}) {\n`);
+            this.write(`scratchRuntime.procedures["${functionName}"] = function(${paramList.join(", ")}) {\n`);
             this.indent++;
-            
+
             // Generate code for the function body
             if (block.next) {
                 this.inFunction = true;
                 this.generateBlockCode(block.next);
                 this.inFunction = false;
             }
-            
+
             this.indent--;
             this.write(`};\n\n`);
-        } 
-        else if (block.name === 'call') {
+        } else if (block.name === "call") {
             // Call a custom procedure/function
             const functionName = block.args[0] as string;
-            const args = block.args.slice(1).map(arg => this.formatArg(arg)).join(', ');
-            
+            const args = block.args
+                .slice(1)
+                .map((arg) => this.formatArg(arg))
+                .join(", ");
+
             this.write(`// Call custom procedure: ${functionName}\n`);
             this.write(`scratchRuntime.procedures["${functionName}"](${args});\n`);
-            
+
             // Process the next block if it exists
             if (block.next) {
                 this.generateBlockCode(block.next);
@@ -1477,7 +1499,7 @@ export class CodeGenerator {
      * Helper method to add proper indentation to the output
      */
     private write(text: string): void {
-        const indentation = '    '.repeat(this.indent);
+        const indentation = "    ".repeat(this.indent);
         this.output += indentation + text;
     }
 
@@ -1485,34 +1507,31 @@ export class CodeGenerator {
      * Helper method to format arguments correctly
      */
     private formatArg(arg: any): string {
-        if (typeof arg === 'string') {
+        if (typeof arg === "string") {
             // If it's a variable reference
-            if (arg.startsWith('$')) {
+            if (arg.startsWith("$")) {
                 return `scratchRuntime.variables["${arg.substring(1)}"]`;
             }
             // If it's a list reference
-            else if (arg.startsWith('#')) {
+            else if (arg.startsWith("#")) {
                 return `scratchRuntime.lists["${arg.substring(1)}"]`;
             }
             // It's a regular string
             else {
                 return `"${arg}"`;
             }
-        } 
-        else if (typeof arg === 'number') {
+        } else if (typeof arg === "number") {
             return arg.toString();
-        }
-        else if (typeof arg === 'object' && arg !== null && 'type' in arg) {
+        } else if (typeof arg === "object" && arg !== null && "type" in arg) {
             // It's a nested block
             const block = arg as BlockNode;
-            if (block.type === 'operators') {
+            if (block.type === "operators") {
                 return this.generateOperatorsBlock(block);
             } else {
                 this.write(`// Warning: Unexpected nested block type: ${block.type}\n`);
                 return '""';
             }
-        }
-        else {
+        } else {
             return JSON.stringify(arg);
         }
     }

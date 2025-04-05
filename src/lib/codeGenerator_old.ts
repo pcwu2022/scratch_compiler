@@ -9,7 +9,7 @@ export class CodeGenerator {
     // The program (AST) to generate code from.
     private program: Program;
     // The generated JavaScript code output.
-    private output: string = '';
+    private output: string = "";
     // Current indentation level for code formatting.
     private indent: number = 0;
 
@@ -58,7 +58,7 @@ export class CodeGenerator {
         // Generate code for variables.
         this.output += `// Variables\n`;
         this.program.variables.forEach((value, name) => {
-            if (typeof value === 'number') {
+            if (typeof value === "number") {
                 this.output += `let ${name} = ${value};\n`;
             } else {
                 this.output += `let ${name} = "${value}";\n`;
@@ -69,14 +69,14 @@ export class CodeGenerator {
         // Generate code for lists.
         this.output += `// Lists\n`;
         this.program.lists.forEach((values, name) => {
-            this.output += `let ${name} = [${values.map(v => typeof v === 'number' ? v : `"${v}"`).join(', ')}];\n`;
+            this.output += `let ${name} = [${values.map((v) => (typeof v === "number" ? v : `"${v}"`)).join(", ")}];\n`;
         });
         this.output += `\n`;
 
         // Generate code for scripts.
         this.output += `// Scripts\n`;
-        this.program.scripts.forEach(script => {
-            script.blocks.forEach(block => {
+        this.program.scripts.forEach((script) => {
+            script.blocks.forEach((block) => {
                 this.generateBlockCode(block);
             });
         });
@@ -89,22 +89,22 @@ export class CodeGenerator {
     private generateBlockCode(block: BlockNode): void {
         // Dispatch based on block type.
         switch (block.type) {
-            case 'event':
+            case "event":
                 this.generateEventBlock(block);
                 break;
-            case 'motion':
+            case "motion":
                 this.generateMotionBlock(block);
                 break;
-            case 'looks':
+            case "looks":
                 this.generateLooksBlock(block);
                 break;
-            case 'control':
+            case "control":
                 this.generateControlBlock(block);
                 break;
-            case 'variables':
+            case "variables":
                 this.generateVariablesBlock(block);
                 break;
-            case 'operators':
+            case "operators":
                 this.generateOperatorsBlock(block);
                 break;
             default:
@@ -120,10 +120,10 @@ export class CodeGenerator {
 
     // generateEventBlock: Generates code for event blocks.
     private generateEventBlock(block: BlockNode): void {
-        if (block.name === 'when') {
+        if (block.name === "when") {
             const eventType = block.args[0];
 
-            if (eventType === 'flagClicked') {
+            if (eventType === "flagClicked") {
                 this.write(`// When green flag clicked\n`);
                 this.write(`document.addEventListener('DOMContentLoaded', async function() {\n`);
                 this.indent++;
@@ -135,8 +135,8 @@ export class CodeGenerator {
 
                 this.indent--;
                 this.write(`});\n\n`);
-            } else if (typeof eventType === 'string' && eventType.includes('keyPressed')) {
-                const key = eventType.replace('keyPressed', '');
+            } else if (typeof eventType === "string" && eventType.includes("keyPressed")) {
+                const key = eventType.replace("keyPressed", "");
                 this.write(`// When ${key} key pressed\n`);
                 this.write(`document.addEventListener('keydown', function(event) {\n`);
                 this.indent++;
@@ -158,7 +158,7 @@ export class CodeGenerator {
 
     // generateMotionBlock: Generates code for motion blocks.
     private generateMotionBlock(block: BlockNode): void {
-        if (block.name === 'move') {
+        if (block.name === "move") {
             const steps = this.formatArg(block.args[0]);
             this.write(`scratchRuntime.sprites[scratchRuntime.currentSprite].move(${steps});\n`);
         }
@@ -166,7 +166,7 @@ export class CodeGenerator {
 
     // generateLooksBlock: Generates code for looks blocks.
     private generateLooksBlock(block: BlockNode): void {
-        if (block.name === 'say') {
+        if (block.name === "say") {
             const message = this.formatArg(block.args[0]);
             const seconds = block.args[1] ? this.formatArg(block.args[1]) : undefined;
 
@@ -180,10 +180,10 @@ export class CodeGenerator {
 
     // generateControlBlock: Generates code for control blocks.
     private generateControlBlock(block: BlockNode): void {
-        if (block.name === 'wait') {
+        if (block.name === "wait") {
             const seconds = this.formatArg(block.args[0]);
             this.write(`await new Promise(resolve => setTimeout(resolve, ${seconds} * 1000));\n`);
-        } else if (block.name === 'repeat') {
+        } else if (block.name === "repeat") {
             const count = this.formatArg(block.args[0]);
             this.write(`for (let i = 0; i < ${count}; i++) {\n`);
             this.indent++;
@@ -195,7 +195,7 @@ export class CodeGenerator {
 
             this.indent--;
             this.write(`}\n`);
-        } else if (block.name === 'if') {
+        } else if (block.name === "if") {
             const condition = this.formatArg(block.args[0]);
             this.write(`if (${condition}) {\n`);
             this.indent++;
@@ -212,11 +212,11 @@ export class CodeGenerator {
 
     // generateVariablesBlock: Generates code for variable manipulation blocks.
     private generateVariablesBlock(block: BlockNode): void {
-        if (block.name === 'set') {
+        if (block.name === "set") {
             const variableName = block.args[0];
             const value = this.formatArg(block.args[1]);
             this.write(`${variableName} = ${value};\n`);
-        } else if (block.name === 'change') {
+        } else if (block.name === "change") {
             const variableName = block.args[0];
             const value = this.formatArg(block.args[1]);
             this.write(`${variableName} += ${value};\n`);
@@ -225,18 +225,18 @@ export class CodeGenerator {
 
     // generateOperatorsBlock: Generates code for operator blocks (expressions).
     private generateOperatorsBlock(block: BlockNode): string {
-        if (block.name === 'expression') {
-            const expression = block.args.map(arg => this.formatArg(arg)).join(' ');
+        if (block.name === "expression") {
+            const expression = block.args.map((arg) => this.formatArg(arg)).join(" ");
             return `(${expression})`;
         }
-        return '';
+        return "";
     }
 
     // formatArg: Formats an argument for JavaScript code.
     private formatArg(arg: string | number | BlockNode): string {
-        if (typeof arg === 'number') {
+        if (typeof arg === "number") {
             return arg.toString();
-        } else if (typeof arg === 'string') {
+        } else if (typeof arg === "string") {
             // Check if it's a string literal.
             if (arg.startsWith('"') || arg.startsWith("'")) {
                 return arg;
@@ -244,9 +244,9 @@ export class CodeGenerator {
                 // It's a variable or special value.
                 return arg;
             }
-        } else if (arg && typeof arg === 'object') {
+        } else if (arg && typeof arg === "object") {
             // It's a nested block (expression).
-            if (arg.type === 'operators' && arg.name === 'expression') {
+            if (arg.type === "operators" && arg.name === "expression") {
                 return this.generateOperatorsBlock(arg);
             }
         }
@@ -256,7 +256,7 @@ export class CodeGenerator {
 
     // write: Appends code to the output with proper indentation.
     private write(code: string): void {
-        const indentation = '    '.repeat(this.indent);
+        const indentation = "    ".repeat(this.indent);
         this.output += indentation + code;
     }
 }

@@ -88,24 +88,24 @@ export class Parser {
             try {
                 // Skip any additional newlines or comments
                 this.skipIrrelevant();
-                
+
                 if (this.isAtEnd()) break;
 
                 // Check for declarations and scripts
                 if (this.match(TokenType.KEYWORD)) {
                     const keyword = this.current.value;
-                    
-                    if (keyword === 'when') {
+
+                    if (keyword === "when") {
                         // Parse a script starting with 'when'
                         const script = this.parseScript();
                         program.scripts.push(script);
-                    } else if (keyword === 'var' || keyword === 'variable') {
+                    } else if (keyword === "var" || keyword === "variable") {
                         // Parse variable declaration
                         this.parseVariableDeclaration(program);
-                    } else if (keyword === 'list') {
+                    } else if (keyword === "list") {
                         // Parse list declaration
                         this.parseListDeclaration(program);
-                    } else if (keyword === 'define') {
+                    } else if (keyword === "define") {
                         // Parse custom block definition
                         this.parseCustomBlockDefinition(program);
                     } else {
@@ -133,17 +133,19 @@ export class Parser {
 
         while (!this.isAtEnd()) {
             // Skip until we find a keyword that could start a new statement
-            if (this.current.type === TokenType.KEYWORD && 
-                ['when', 'var', 'variable', 'list', 'define'].includes(this.current.value)) {
+            if (
+                this.current.type === TokenType.KEYWORD &&
+                ["when", "var", "variable", "list", "define"].includes(this.current.value)
+            ) {
                 return;
             }
-            
+
             // Skip until we find a newline, which might indicate a new statement
             if (this.current.type === TokenType.NEWLINE) {
                 this.advance();
                 return;
             }
-            
+
             this.advance();
         }
     }
@@ -152,7 +154,7 @@ export class Parser {
     private parseScript(): Script {
         // Create a new script with an empty array of blocks
         const script: Script = {
-            blocks: []
+            blocks: [],
         };
 
         // Reset the block stack for this script
@@ -163,7 +165,7 @@ export class Parser {
         const firstBlock = this.parseBlock();
         if (firstBlock) {
             script.blocks.push(firstBlock);
-            
+
             // Parse subsequent blocks
             this.parseScriptBlocks(script);
         }
@@ -179,40 +181,40 @@ export class Parser {
         // Continue parsing blocks until we reach the end of the script
         while (!this.isAtEnd()) {
             this.skipIrrelevant();
-            
+
             if (this.isAtEnd()) break;
-            
+
             // Check for indentation changes
             if (this.match(TokenType.INDENT)) {
                 this.indentLevel++;
                 this.advance();
-                
+
                 // Parse the indented block
                 if (!this.blockStack.length) {
                     break; // No parent block to attach to
                 }
-                
+
                 const parentBlock = this.blockStack[this.blockStack.length - 1];
-                
+
                 // For control blocks that can have nested blocks
-                if (['if', 'repeat', 'forever', 'until', 'while'].includes(parentBlock.name)) {
+                if (["if", "repeat", "forever", "until", "while"].includes(parentBlock.name)) {
                     // Create a sequence of blocks at this indentation level
                     const firstNestedBlock = this.parseBlock();
                     if (firstNestedBlock) {
                         // Add the first nested block as an argument
                         parentBlock.args.push(firstNestedBlock);
-                        
+
                         // Parse subsequent blocks at this indentation level
                         let currentBlock = firstNestedBlock;
-                        
+
                         // Track blocks at this indentation level
                         while (!this.isAtEnd() && !this.match(TokenType.DEDENT)) {
                             this.skipIrrelevant();
-                            
+
                             if (this.isAtEnd() || this.match(TokenType.DEDENT)) {
                                 break;
                             }
-                            
+
                             if (this.isBlockStart()) {
                                 const nextBlock = this.parseBlock();
                                 if (nextBlock) {
@@ -228,7 +230,7 @@ export class Parser {
                 } else {
                     // For other blocks, handle nested blocks normally
                     const nestedBlock = this.parseBlock();
-                    
+
                     if (nestedBlock) {
                         if (!parentBlock.next) {
                             parentBlock.next = nestedBlock;
@@ -240,7 +242,7 @@ export class Parser {
                             }
                             lastBlock.next = nestedBlock;
                         }
-                        
+
                         // Push this block to track indentation level
                         this.blockStack.push(nestedBlock);
                     }
@@ -248,12 +250,12 @@ export class Parser {
             } else if (this.match(TokenType.DEDENT)) {
                 this.indentLevel--;
                 this.advance();
-                
+
                 // Pop the last block from the stack if we're at a deeper level
                 if (this.blockStack.length > 1) {
                     this.blockStack.pop();
                 }
-                
+
                 // If we've reduced indentation below our starting level, we're done with this script
                 if (this.indentLevel < 0) {
                     this.indentLevel = 0;
@@ -276,7 +278,7 @@ export class Parser {
                             }
                             lastBlock.next = block;
                         }
-                        
+
                         // Replace the last block in the stack with this new one
                         this.blockStack.pop();
                         this.blockStack.push(block);
@@ -296,28 +298,51 @@ export class Parser {
     // isBlockStart: Checks if the current token can start a block
     private isBlockStart(): boolean {
         if (!this.match(TokenType.KEYWORD)) return false;
-        
+
         const blockStartKeywords = [
             // Events
-            'when', 'broadcast', 'receive',
+            "when",
+            "broadcast",
+            "receive",
             // Motion
-            'move', 'turn', 'goto', 'glide', 'point',
+            "move",
+            "turn",
+            "goto",
+            "glide",
+            "point",
             // Looks
-            'say', 'think', 'show', 'hide', 'switch', 'change', 'set',
+            "say",
+            "think",
+            "show",
+            "hide",
+            "switch",
+            "change",
+            "set",
             // Sound
-            'play', 'stop',
+            "play",
+            "stop",
             // Control
-            'wait', 'repeat', 'forever', 'if', 'else', 'until', 'while', 'stop',
+            "wait",
+            "repeat",
+            "forever",
+            "if",
+            "else",
+            "until",
+            "while",
+            "stop",
             // Sensing
-            'ask', 'touching',
+            "ask",
+            "touching",
             // Variables
-            'set', 'change',
+            "set",
+            "change",
             // Operators (rarely start blocks)
-            'join',
+            "join",
             // Pen
-            'pen', 'stamp'
+            "pen",
+            "stamp",
         ];
-        
+
         return blockStartKeywords.includes(this.current.value);
     }
 
@@ -330,65 +355,68 @@ export class Parser {
 
         // Get the block name (keyword)
         const blockKeyword = this.consume(TokenType.KEYWORD, "Expected block keyword").value;
-        
+
         // Determine the block type based on the keyword
         let blockType: BlockType = this.determineBlockType(blockKeyword);
-        
+
         // Parse block arguments
         const args: (string | number | BlockNode)[] = this.parseBlockArguments(blockKeyword);
-        
+
         // Create the block node
         const block: BlockNode = {
             type: blockType,
             name: blockKeyword,
-            args
+            args,
         };
-        
+
         // Add this block to the stack so nested blocks can reference it
         this.blockStack.push(block);
-        
+
         // Handle special case for if-else blocks
-        if (blockKeyword === 'if') {
+        if (blockKeyword === "if") {
             // Check for an else clause
             this.skipIrrelevant();
-            if (!this.isAtEnd() && this.match(TokenType.KEYWORD) && this.current.value === 'else') {
+            if (!this.isAtEnd() && this.match(TokenType.KEYWORD) && this.current.value === "else") {
                 this.advance(); // Consume 'else'
-                
+
                 // Parse the else block
                 const elseBlock = this.parseBlock();
                 if (elseBlock) {
                     // Add the else block as a special argument
-                    block.args.push('else');
+                    block.args.push("else");
                     block.args.push(elseBlock);
                 }
             }
         }
-        
+
         return block;
     }
 
     // determineBlockType: Determine the type of block based on its keyword
     private determineBlockType(keyword: string): BlockType {
         // Maps common Scratch block keywords to their respective types
-        return blockTypeMap[keyword] || 'custom';
+        return blockTypeMap[keyword] || "custom";
     }
 
     // parseBlockArguments: Parse arguments for a block based on its type
     private parseBlockArguments(blockName: string): (string | number | BlockNode)[] {
         const args: (string | number | BlockNode)[] = [];
-        
+
         // Continue parsing arguments until we hit a new block, indentation change, or end of line
         while (!this.isAtEnd()) {
             this.skipIrrelevant();
-            
+
             if (this.isAtEnd()) break;
-            
+
             // Stop if we encounter a new block start, indent, or dedent
-            if (this.match(TokenType.INDENT) || this.match(TokenType.DEDENT) || 
-                (this.match(TokenType.KEYWORD) && this.isBlockStart())) {
+            if (
+                this.match(TokenType.INDENT) ||
+                this.match(TokenType.DEDENT) ||
+                (this.match(TokenType.KEYWORD) && this.isBlockStart())
+            ) {
                 break;
             }
-            
+
             // Parse different types of arguments
             if (this.match(TokenType.STRING)) {
                 // String argument
@@ -406,9 +434,9 @@ export class Parser {
                 // List value in brackets
                 const listValues = this.parseListLiteral();
                 args.push({
-                    type: 'operators',
-                    name: 'list',
-                    args: listValues
+                    type: "operators",
+                    name: "list",
+                    args: listValues,
                 });
             } else if (this.match(TokenType.KEYWORD)) {
                 // Keyword argument
@@ -421,16 +449,16 @@ export class Parser {
                 this.advance();
             }
         }
-        
+
         return args;
     }
 
     // parseExpression: Parse a parenthesized expression
     private parseExpression(): BlockNode {
         this.consume(TokenType.PARENTHESIS_OPEN, "Expected '('");
-        
+
         const args: (string | number | BlockNode)[] = [];
-        
+
         // Parse the expression until we hit the closing parenthesis
         while (!this.isAtEnd() && !this.match(TokenType.PARENTHESIS_CLOSE)) {
             if (this.match(TokenType.STRING)) {
@@ -448,23 +476,23 @@ export class Parser {
                 this.advance();
             }
         }
-        
+
         this.consume(TokenType.PARENTHESIS_CLOSE, "Expected ')'");
-        
+
         // Create an operator block for the expression
         return {
-            type: 'operators',
-            name: 'expression',
-            args
+            type: "operators",
+            name: "expression",
+            args,
         };
     }
 
     // parseListLiteral: Parse a list literal [value1, value2, ...]
     private parseListLiteral(): (string | number)[] {
         this.consume(TokenType.BRACKET_OPEN, "Expected '['");
-        
+
         const values: (string | number)[] = [];
-        
+
         // Parse list values until we hit the closing bracket
         while (!this.isAtEnd() && !this.match(TokenType.BRACKET_CLOSE)) {
             // Skip commas between values
@@ -472,7 +500,7 @@ export class Parser {
                 this.advance();
                 continue;
             }
-            
+
             if (this.match(TokenType.STRING)) {
                 values.push(this.advance().value);
             } else if (this.match(TokenType.NUMBER)) {
@@ -484,9 +512,9 @@ export class Parser {
                 this.advance();
             }
         }
-        
+
         this.consume(TokenType.BRACKET_CLOSE, "Expected ']'");
-        
+
         return values;
     }
 
@@ -494,16 +522,16 @@ export class Parser {
     private parseVariableDeclaration(program: Program): void {
         // Skip 'var' or 'variable' keyword
         this.advance();
-        
+
         // Expect a variable name (identifier)
         const variableName = this.consume(TokenType.IDENTIFIER, "Expected variable name").value;
-        
+
         // Check for initial value assignment
         let initialValue: any = 0; // Default value
-        
-        if (!this.isAtEnd() && this.match(TokenType.OPERATOR) && this.current.value === '=') {
+
+        if (!this.isAtEnd() && this.match(TokenType.OPERATOR) && this.current.value === "=") {
             this.advance(); // Skip '='
-            
+
             // Parse the initial value
             if (this.match(TokenType.NUMBER)) {
                 initialValue = parseFloat(this.advance().value);
@@ -516,10 +544,10 @@ export class Parser {
                 this.advance();
             }
         }
-        
+
         // Add the variable to the program
         program.variables.set(variableName, initialValue);
-        
+
         // Skip to the end of the declaration (usually a newline)
         while (!this.isAtEnd() && !this.match(TokenType.NEWLINE)) {
             this.advance();
@@ -530,26 +558,26 @@ export class Parser {
     private parseListDeclaration(program: Program): void {
         // Skip 'list' keyword
         this.advance();
-        
+
         // Expect a list name (identifier)
         const listName = this.consume(TokenType.IDENTIFIER, "Expected list name").value;
-        
+
         // Initialize with an empty list
         let listValues: any[] = [];
-        
+
         // Check for initial values
-        if (!this.isAtEnd() && this.match(TokenType.OPERATOR) && this.current.value === '=') {
+        if (!this.isAtEnd() && this.match(TokenType.OPERATOR) && this.current.value === "=") {
             this.advance(); // Skip '='
-            
+
             // Parse list initialization
             if (this.match(TokenType.BRACKET_OPEN)) {
                 listValues = this.parseListLiteral() as any[];
             }
         }
-        
+
         // Add the list to the program
         program.lists.set(listName, listValues);
-        
+
         // Skip to the end of the declaration (usually a newline)
         while (!this.isAtEnd() && !this.match(TokenType.NEWLINE)) {
             this.advance();
@@ -560,16 +588,16 @@ export class Parser {
     private parseCustomBlockDefinition(program: Program): void {
         // Skip 'define' keyword
         this.advance();
-        
+
         // Expect the block name (identifier)
         const blockName = this.consume(TokenType.IDENTIFIER, "Expected custom block name").value;
-        
+
         // Parse parameter list if available
         const parameters: string[] = [];
-        
+
         if (!this.isAtEnd() && this.match(TokenType.PARENTHESIS_OPEN)) {
             this.advance(); // Skip '('
-            
+
             // Parse parameters until closing parenthesis
             while (!this.isAtEnd() && !this.match(TokenType.PARENTHESIS_CLOSE)) {
                 if (this.match(TokenType.IDENTIFIER)) {
@@ -580,42 +608,42 @@ export class Parser {
                     this.advance(); // Skip other tokens
                 }
             }
-            
+
             if (!this.isAtEnd()) {
                 this.advance(); // Skip ')'
             }
         }
-        
+
         // Create a custom block script
         const customScript: Script = {
-            blocks: []
+            blocks: [],
         };
-        
+
         // Parse the custom block body
         this.skipIrrelevant();
-        
+
         if (!this.isAtEnd() && this.match(TokenType.INDENT)) {
             this.advance(); // Skip indent
-            
+
             // Reset indentation for parsing this block
             const oldIndentLevel = this.indentLevel;
             this.indentLevel = 1;
-            
+
             // Parse the body of the custom block
             this.parseScriptBlocks(customScript);
-            
+
             // Restore indentation level
             this.indentLevel = oldIndentLevel;
         }
-        
+
         // Add this custom block to the program
         // For now, we'll add it as a special script with metadata
         customScript.blocks.unshift({
-            type: 'custom',
-            name: 'define',
-            args: [blockName, ...parameters]
+            type: "custom",
+            name: "define",
+            args: [blockName, ...parameters],
         });
-        
+
         program.scripts.push(customScript);
     }
 }

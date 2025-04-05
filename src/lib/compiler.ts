@@ -5,7 +5,7 @@
 import { Lexer } from "./lexer";
 import { Parser } from "./parser";
 import { CodeGenerator } from "./codeGenerator";
-import Debugger from './debugger';
+import Debugger from "./debugger";
 
 // Main compiler class
 export class ScratchTextCompiler {
@@ -14,13 +14,13 @@ export class ScratchTextCompiler {
     constructor() {
         this.debugger = new Debugger({
             enabled: true,
-            logLevels: ['info', 'warn', 'error'],
+            logLevels: ["info", "warn", "error"],
             saveToFile: true,
-            filePath: 'src/debug/compilerOutput.json',
+            filePath: "src/debug/compilerOutput.json",
         });
     }
     // compile: Main method that takes Scratch-like text code as input and returns JavaScript code.
-    compile(code: string): { js: string, html: string, error?: string } {
+    compile(code: string): { js: string; html: string; error?: string } {
         try {
             // Step 1: Tokenize the input using the Lexer.
             // The Lexer converts the raw text input into an array of tokens,
@@ -50,27 +50,31 @@ export class ScratchTextCompiler {
             return jsCode;
         } catch (error) {
             // Handle any errors that occur during compilation.
-            console.error('Compilation error:', error);
+            console.error("Compilation error:", error);
             // Return an error message as a comment in the JavaScript output.
-            return { js: '', html: '', error: `// Compilation error: ${error instanceof Error ? error.message : String(error)}`};
+            return {
+                js: "",
+                html: "",
+                error: `// Compilation error: ${error instanceof Error ? error.message : String(error)}`,
+            };
         }
     }
 }
 
 // compile: Asynchronous function that wraps the compiler and handles potential errors.
 // This function is designed to be used in an asynchronous context, such as in a web environment.
-export async function compile(code: string): Promise<{ js: string, html:  string } | { error: string }> {
+export async function compile(code: string): Promise<{ js: string; html: string } | { error: string }> {
     try {
         // Create an instance of the ScratchTextCompiler.
         const compiler = new ScratchTextCompiler();
         // Call the compile method to generate JavaScript code.
         const { js, html } = compiler.compile(code);
         // Return the generated code in a result object.
-        return { js: js, html:  html };
+        return { js: js, html: html };
     } catch (error) {
         // Handle any errors that occur during the compilation process.
-        console.error('Error in compile function:', error);
+        console.error("Error in compile function:", error);
         // Return an error object indicating compilation failure.
-        return { error: 'Compilation failed in compiler function.' };
+        return { error: "Compilation failed in compiler function." };
     }
 }

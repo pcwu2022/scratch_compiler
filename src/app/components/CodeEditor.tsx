@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import Editor, { useMonaco } from '@monaco-editor/react';
-import * as monaco from 'monaco-editor';
-import { initialCode, languageDef, languageSelector } from '@/lib/codeEditorConfig';
-import { data } from 'autoprefixer';
+import React, { useState, useRef, useEffect } from "react";
+import Editor, { useMonaco } from "@monaco-editor/react";
+import * as monaco from "monaco-editor";
+import { initialCode, languageDef, languageSelector } from "@/lib/codeEditorConfig";
+import { data } from "autoprefixer";
 
 export default function CodeEditor() {
     const [code, setCode] = useState<string>(initialCode);
@@ -12,7 +12,7 @@ export default function CodeEditor() {
     const [loading, setLoading] = useState(false);
     const [compiled, setCompiled] = useState(false);
     const [running, setRunning] = useState(false);
-    const [terminalOutput, setTerminalOutput] = useState('');
+    const [terminalOutput, setTerminalOutput] = useState("");
     const [compiledResult, setCompiledResult] = useState<string | null>(null);
     const [htmlContent, setHtmlContent] = useState<string | null>(null);
     const [showHtml, setShowHtml] = useState(false);
@@ -22,33 +22,39 @@ export default function CodeEditor() {
 
     useEffect(() => {
         const storedCode = localStorage.getItem("scratchCode");
-        setCode(!storedCode ? initialCode : storedCode?.replaceAll("\n", "").replaceAll(" ", "") === "" ? initialCode : storedCode);
+        setCode(
+            !storedCode
+                ? initialCode
+                : storedCode?.replaceAll("\n", "").replaceAll(" ", "") === ""
+                  ? initialCode
+                  : storedCode
+        );
     }, []);
 
     useEffect(() => {
         if (monacoInstance) {
-            monacoInstance.languages.register({ id: 'scratchSyntax' });
-            monacoInstance.languages.setMonarchTokensProvider('scratchSyntax', languageDef);
-            monacoInstance.languages.registerCompletionItemProvider('scratchSyntax', languageSelector(monacoInstance));
+            monacoInstance.languages.register({ id: "scratchSyntax" });
+            monacoInstance.languages.setMonarchTokensProvider("scratchSyntax", languageDef);
+            monacoInstance.languages.registerCompletionItemProvider("scratchSyntax", languageSelector(monacoInstance));
 
             // Register javascript for output highlighting
-            monacoInstance.languages.register({ id: 'javascript' });
-            
+            monacoInstance.languages.register({ id: "javascript" });
+
             // Register HTML for preview
-            monacoInstance.languages.register({ id: 'html' });
+            monacoInstance.languages.register({ id: "html" });
         }
     }, [monacoInstance]);
 
     const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: any) => {
         editorRef.current = editor;
         if (monacoInstance) {
-            monaco.editor.setModelLanguage(editor.getModel()!, 'scratchSyntax');
+            monaco.editor.setModelLanguage(editor.getModel()!, "scratchSyntax");
         }
     };
 
     const saveCode = () => {
         localStorage.setItem("scratchCode", code);
-    }
+    };
 
     const runResult = async (jsCode: string) => {
         const data = await eval(`((async () => {
@@ -67,33 +73,32 @@ export default function CodeEditor() {
                 returnOutputs.push((typeof(output) === "string") ? output : JSON.stringify(output))
             }
             return returnOutputs;
-        })()).then((data) => JSON.stringify(data)).catch((error) => {console.error(error)})`);   
-        
+        })()).then((data) => JSON.stringify(data)).catch((error) => {console.error(error)})`);
+
         setTerminalOutput(JSON.parse(data).join("\n"));
-        
-    }
+    };
 
     const handleCompile = async (): Promise<string> => {
         saveCode();
         setLoading(true);
         setCompiledJsCode(null);
-        setTerminalOutput('');
+        setTerminalOutput("");
         setCompiledResult(null);
         setHtmlContent(null);
 
         let retValue = "";
 
         try {
-            const response = await fetch('/api/compile', {
-                method: 'POST',
+            const response = await fetch("/api/compile", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ code }),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to compile');
+                throw new Error("Failed to compile");
             }
 
             const data = await response.json();
@@ -104,8 +109,8 @@ export default function CodeEditor() {
             console.log(data.html);
             retValue = data.js;
         } catch (error) {
-            console.error('Error compiling:', error);
-            setCompiledJsCode('Compilation failed.');
+            console.error("Error compiling:", error);
+            setCompiledJsCode("Compilation failed.");
             setTerminalOutput(String(error));
         } finally {
             setLoading(false);
@@ -119,10 +124,10 @@ export default function CodeEditor() {
         saveCode();
         setRunning(true);
         let code = compiledJsCode;
-        if (!compiled){
+        if (!compiled) {
             code = await handleCompile();
         }
-        if (!code){
+        if (!code) {
             setRunning(false);
             return;
         }
@@ -136,32 +141,34 @@ export default function CodeEditor() {
             <div className="Body-Header bg-gray-800 p-4 flex justify-between items-center">
                 <h1 className="text-white font-bold">Scratch Compiler</h1>
                 <div>
-                    <span className='ml-4'></span>
+                    <span className="ml-4"></span>
                     <button
                         onClick={handleRun}
                         disabled={running}
                         className={`bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ${
-                            (running) ? 'cursor-not-allowed' : ''
+                            running ? "cursor-not-allowed" : ""
                         }`}
                     >
-                        {running ? 'Running...' : compiled ? '▶ Run' : '▶ Compile and Run'}
+                        {running ? "Running..." : compiled ? "▶ Run" : "▶ Compile and Run"}
                     </button>
-                    <span className='ml-4'></span>
+                    <span className="ml-4"></span>
                     <button
                         onClick={handleCompile}
                         disabled={loading}
                         className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
-                            loading ? 'opacity-50 cursor-not-allowed' : ''
+                            loading ? "opacity-50 cursor-not-allowed" : ""
                         }`}
                     >
-                        {loading ? '⚙ Compiling...' : '⚙ Compile'}
+                        {loading ? "⚙ Compiling..." : "⚙ Compile"}
                     </button>
                 </div>
             </div>
 
             <div className="Body-Interface relative h-3/4">
                 {/* Left panel - Code editor */}
-                <div className={`Code-Editor h-full ${(showHtml && htmlContent) ? "w-1/2 inline-block align-top " : "w-full "}`}>
+                <div
+                    className={`Code-Editor h-full ${showHtml && htmlContent ? "w-1/2 inline-block align-top " : "w-full "}`}
+                >
                     <Editor
                         width="100%"
                         height="100%"
@@ -172,13 +179,13 @@ export default function CodeEditor() {
                             selectOnLineNumbers: true,
                             roundedSelection: false,
                             readOnly: false,
-                            cursorStyle: 'line',
+                            cursorStyle: "line",
                             automaticLayout: true,
                         }}
                         onChange={(value) => {
                             setCompiled(false);
                             saveCode();
-                            setCode(value || '');
+                            setCode(value || "");
                         }}
                         onMount={handleEditorDidMount}
                     />
@@ -192,7 +199,7 @@ export default function CodeEditor() {
                         </div> */}
                         <div className="w-full h-full">
                             <div className="w-full h-full bg-white overflow-auto">
-                                <iframe 
+                                <iframe
                                     srcDoc={htmlContent}
                                     className="w-full h-full border-0"
                                     title="HTML Preview"
@@ -222,7 +229,9 @@ export default function CodeEditor() {
 
             <div className="bg-gray-800 p-4 max-h-1/4 overflow-auto">
                 <h2 className="text-white font-bold">Terminal Output</h2>
-                <pre id="terminal" className="text-gray-300 whitespace-pre-wrap">{terminalOutput}</pre>
+                <pre id="terminal" className="text-gray-300 whitespace-pre-wrap">
+                    {terminalOutput}
+                </pre>
             </div>
             {compiledResult && (
                 <div className="bg-gray-900 p-4">
