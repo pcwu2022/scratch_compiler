@@ -4,9 +4,9 @@
 // making it easier to analyze and execute.
 
 import { Program, BlockNode, Script, BlockType, Token, TokenType, blockTypeMap } from "@/types/compilerTypes";
-import { SimpleDebugger } from "./debugger";
+// import { SimpleDebugger } from "./debugger";
 
-const d: SimpleDebugger = new SimpleDebugger();
+// const d: SimpleDebugger = new SimpleDebugger();
 
 export class Parser {
     // Array of tokens to be parsed.
@@ -357,10 +357,10 @@ export class Parser {
         const blockKeyword = this.consume(TokenType.KEYWORD, "Expected block keyword").value;
 
         // Determine the block type based on the keyword
-        let blockType: BlockType = this.determineBlockType(blockKeyword);
+        const blockType: BlockType = this.determineBlockType(blockKeyword);
 
         // Parse block arguments
-        const args: (string | number | BlockNode)[] = this.parseBlockArguments(blockKeyword);
+        const args: (string | number | BlockNode)[] = this.parseBlockArguments();
 
         // Create the block node
         const block: BlockNode = {
@@ -399,7 +399,7 @@ export class Parser {
     }
 
     // parseBlockArguments: Parse arguments for a block based on its type
-    private parseBlockArguments(blockName: string): (string | number | BlockNode)[] {
+    private parseBlockArguments(): (string | number | BlockNode)[] {
         const args: (string | number | BlockNode)[] = [];
 
         // Continue parsing arguments until we hit a new block, indentation change, or end of line
@@ -527,7 +527,7 @@ export class Parser {
         const variableName = this.consume(TokenType.IDENTIFIER, "Expected variable name").value;
 
         // Check for initial value assignment
-        let initialValue: any = 0; // Default value
+        let initialValue: string | number | object | undefined | null = 0; // Default value
 
         if (!this.isAtEnd() && this.match(TokenType.OPERATOR) && this.current.value === "=") {
             this.advance(); // Skip '='
@@ -563,7 +563,7 @@ export class Parser {
         const listName = this.consume(TokenType.IDENTIFIER, "Expected list name").value;
 
         // Initialize with an empty list
-        let listValues: any[] = [];
+        let listValues: (string | number | object | undefined | null)[] = [];
 
         // Check for initial values
         if (!this.isAtEnd() && this.match(TokenType.OPERATOR) && this.current.value === "=") {
@@ -571,7 +571,7 @@ export class Parser {
 
             // Parse list initialization
             if (this.match(TokenType.BRACKET_OPEN)) {
-                listValues = this.parseListLiteral() as any[];
+                listValues = this.parseListLiteral() as (string | number | object | undefined | null)[];
             }
         }
 

@@ -10,9 +10,9 @@ interface DebugOptions {
 
 interface LogEntry {
     level: string;
-    message: any;
+    message: string | number | object | undefined | null;
     timestamp: string;
-    context?: any;
+    context?: string | number | object | undefined | null;
 }
 
 class SimpleDebugger {
@@ -20,7 +20,7 @@ class SimpleDebugger {
     constructor(enabled: boolean = true) {
         this.enabled = enabled;
     }
-    debug(...args: any[]) {
+    debug(...args: (string | number | object | undefined | null)[]) {
         if (this.enabled) {
             console.log(...args);
         }
@@ -47,7 +47,7 @@ class Debugger {
         this.options = { ...this.options, ...options };
     }
 
-    log(level: string, message: any, context?: any) {
+    log(level: string, message: string | number | object | undefined | null, context?: string | number | object | undefined | null) {
         if (!this.options.enabled) {
             return;
         }
@@ -72,19 +72,19 @@ class Debugger {
         }
     }
 
-    info(message: any, context?: any) {
+    info(message: string | number | object | undefined | null, context?: string | number | object | undefined | null) {
         this.log("info", message, context);
     }
 
-    warn(message: any, context?: any) {
+    warn(message: string | number | object | undefined | null, context?: string | number | object | undefined | null) {
         this.log("warn", message, context);
     }
 
-    error(message: any, context?: any) {
+    error(message: string | number | object | undefined | null, context?: string | number | object | undefined | null) {
         this.log("error", message, context);
     }
 
-    debug(message: any, context?: any) {
+    debug(message: string | number | object | undefined | null, context?: string | number | object | undefined | null) {
         this.log("debug", message, context);
     }
 

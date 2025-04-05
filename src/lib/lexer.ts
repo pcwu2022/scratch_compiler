@@ -335,7 +335,7 @@ export class Lexer {
     // Extract a numeric literal from the input code.
     private extractNumber(): void {
         // console.log("Number starts at: ", this.code[this.position]);
-        let start = this.position;
+        // const start = this.position;
         let value = "";
         let isFloat = false;
 

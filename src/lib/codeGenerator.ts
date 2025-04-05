@@ -1506,7 +1506,7 @@ export class CodeGenerator {
     /**
      * Helper method to format arguments correctly
      */
-    private formatArg(arg: any): string {
+    private formatArg(arg: string | number | object): string {
         if (typeof arg === "string") {
             // If it's a variable reference
             if (arg.startsWith("$")) {

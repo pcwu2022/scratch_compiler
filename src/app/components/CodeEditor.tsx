@@ -4,7 +4,9 @@ import React, { useState, useRef, useEffect } from "react";
 import Editor, { useMonaco } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import { initialCode, languageDef, languageSelector } from "@/lib/codeEditorConfig";
-import { data } from "autoprefixer";
+// import { data } from "autoprefixer";
+
+type monacoType = typeof monaco;
 
 export default function CodeEditor() {
     const [code, setCode] = useState<string>(initialCode);
@@ -45,7 +47,7 @@ export default function CodeEditor() {
         }
     }, [monacoInstance]);
 
-    const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: any) => {
+    const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monaco: monacoType) => {
         editorRef.current = editor;
         if (monacoInstance) {
             monaco.editor.setModelLanguage(editor.getModel()!, "scratchSyntax");

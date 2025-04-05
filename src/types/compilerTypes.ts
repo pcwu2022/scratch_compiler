@@ -53,8 +53,8 @@ interface Script {
 
 interface Program {
     scripts: Script[];
-    variables: Map<string, any>;
-    lists: Map<string, any[]>;
+    variables: Map<string, (string | number | object | undefined | null)>;
+    lists: Map<string, (string | number | object | undefined | null)[]>;
 }
 
 export type { BlockType, BlockNode, Script, Program };
