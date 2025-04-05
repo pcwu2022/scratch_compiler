@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Scratch-like JavaScript Program</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #f0f0f0;
+            }
+            
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .controls {
+                margin-bottom: 10px;
+                display: flex;
+                gap: 10px;
+            }
+            
+            button {
+                padding: 10px 15px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            
+            button:hover {
+                background-color: #45a049;
+            }
+            
+            #stage {
+                background-color: white;
+                border: 2px solid #333;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            #console {
+                width: 480px;
+                height: 200px;
+                margin-top: 20px;
+                border: 1px solid #ccc;
+                padding: 10px;
+                overflow-y: auto;
+                font-family: monospace;
+                background-color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Scratch-like JavaScript Program</h1>
+            <div class="controls">
+                <button id="start-button">Green Flag (Start)</button>
+                <button id="stop-button">Stop</button>
+                <button id="reset-button">Reset</button>
+            </div>
+            <div id="stage"></div>
+            <div id="console"></div>
+        </div>
+
+        <script>
+            // Console logging override to display in our custom console
+            const originalConsoleLog = console.log;
+            console.log = function() {
+                // Call the original console.log
+                originalConsoleLog.apply(console, arguments);
+                
+                // Display in our custom console
+                const consoleDiv = document.getElementById('console');
+                if (consoleDiv) {
+                    const message = Array.from(arguments).join(' ');
+                    const logLine = document.createElement('div');
+                    logLine.textContent = message;
+                    consoleDiv.appendChild(logLine);
+                    consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                }
+            };
+            
+            // Setup controls
+            document.getElementById('start-button').addEventListener('click', function() {
+                // Trigger the green flag event
+                const event = new Event('DOMContentLoaded');
+                document.dispatchEvent(event);
+            });
+            
+            document.getElementById('stop-button').addEventListener('click', function() {
+                // For a real implementation, you would need a way to stop all running scripts
+                console.log('Program stopped');
+            });
+            
+            document.getElementById('reset-button').addEventListener('click', function() {
+                // Reload the page to reset everything
+                location.reload();
+            });
+            
+            // Generated program code
+            // Generated Scratch-like JavaScript code
+// Runtime support functions
+            const scratchRuntime = {
+                sprites: {},
+                stage: { width: 480, height: 360 },
+                currentSprite: 'Sprite1',
+                variables: {},
+                lists: {},
+                procedures: {},
+                events: {},
+                answer: '',
+                broadcasts: {},
+                init: function() {
+                    // Initialize stage
+                    this.stage = {
+                        width: 480,
+                        height: 360,
+                        backgroundColor: '#ffffff',
+                        tempo: 60,
+                        volume: 100
+                    };
+
+                    // Initialize default sprite
+                    this.sprites.Sprite1 = {
+                        x: 0,
+                        y: 0,
+                        direction: 90,
+                        costumes: ['default'],
+                        currentCostume: 0,
+                        visible: true,
+                        size: 100,
+                        effects: { color: 0, fisheye: 0, whirl: 0, pixelate: 0, mosaic: 0, brightness: 0, ghost: 0 },
+                        say: function(message, seconds) {
+                            const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                            const sayDiv = document.getElementById('say-bubble');
+                            if (!sayDiv) {
+                                const newSayDiv = document.createElement('div');
+                                newSayDiv.id = 'say-bubble';
+                                newSayDiv.style.position = 'absolute';
+                                newSayDiv.style.backgroundColor = 'white';
+                                newSayDiv.style.border = '2px solid black';
+                                newSayDiv.style.borderRadius = '10px';
+                                newSayDiv.style.padding = '5px';
+                                newSayDiv.style.top = '50px';
+                                newSayDiv.style.left = '150px';
+                                newSayDiv.textContent = message;
+                                document.getElementById('stage').appendChild(newSayDiv);
+                            } else {
+                                sayDiv.textContent = message;
+                                sayDiv.style.display = 'block';
+                            }
+                            console.log(`${scratchRuntime.currentSprite} says: ${message}`);
+                            if (seconds) {
+                                setTimeout(() => {
+                                    const sayDiv = document.getElementById('say-bubble');
+                                    if (sayDiv) sayDiv.style.display = 'none';
+                                    console.log(`${scratchRuntime.currentSprite} stopped saying`);
+                                }, seconds * 1000);
+                            }
+                        },
+                        move: function(steps) {
+                            const radians = this.direction * Math.PI / 180;
+                            this.x += steps * Math.cos(radians);
+                            this.y += steps * Math.sin(radians);
+                            
+                            // Update sprite position in the DOM
+                            const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                            if (spriteDiv) {
+                                spriteDiv.style.left = (this.x + scratchRuntime.stage.width/2) + 'px';
+                                spriteDiv.style.bottom = (this.y + scratchRuntime.stage.height/2) + 'px';
+                            }
+                            console.log(`${scratchRuntime.currentSprite} moved to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);
+                        },
+                        turnRight: function(degrees) {
+                            this.direction = (this.direction + degrees) % 360;
+                            console.log(`${scratchRuntime.currentSprite} turned right ${degrees} degrees to ${this.direction} degrees`);
+                            // Update sprite rotation in the DOM
+                            const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                            if (spriteDiv) {
+                                spriteDiv.style.transform = `rotate(${this.direction - 90}deg)`;
+                            }
+                        },
+                        turnLeft: function(degrees) {
+                            this.direction = (this.direction - degrees) % 360;
+                            if (this.direction < 0) this.direction += 360;
+                            console.log(`${scratchRuntime.currentSprite} turned left ${degrees} degrees to ${this.direction} degrees`);
+                            // Update sprite rotation in the DOM
+                            const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                            if (spriteDiv) {
+                                spriteDiv.style.transform = `rotate(${this.direction - 90}deg)`;
+                            }
+                        },
+                        pointInDirection: function(direction) {
+                            this.direction = direction % 360;
+                            if (this.direction < 0) this.direction += 360;
+                            console.log(`${scratchRuntime.currentSprite} now pointing in direction ${this.direction} degrees`);
+                            // Update sprite rotation in the DOM
+                            const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                            if (spriteDiv) {
+                                spriteDiv.style.transform = `rotate(${this.direction - 90}deg)`;
+                            }
+                        },
+                        goTo: function(x, y) {
+                            this.x = x;
+                            this.y = y;
+                            // Update sprite position in the DOM
+                            const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                            if (spriteDiv) {
+                                spriteDiv.style.left = (this.x + scratchRuntime.stage.width/2) + 'px';
+                                spriteDiv.style.bottom = (this.y + scratchRuntime.stage.height/2) + 'px';
+                            }
+                            console.log(`${scratchRuntime.currentSprite} went to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);
+                        },
+                        goToSprite: function(spriteName) {
+                            if (scratchRuntime.sprites[spriteName]) {
+                                this.x = scratchRuntime.sprites[spriteName].x;
+                                this.y = scratchRuntime.sprites[spriteName].y;
+                                // Update sprite position in the DOM
+                                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                                if (spriteDiv) {
+                                    spriteDiv.style.left = (this.x + scratchRuntime.stage.width/2) + 'px';
+                                    spriteDiv.style.bottom = (this.y + scratchRuntime.stage.height/2) + 'px';
+                                }
+                                console.log(`${scratchRuntime.currentSprite} went to ${spriteName} at (${Math.floor(this.x)}, ${Math.floor(this.y)})`);
+                            }
+                        },
+                        hide: function() {
+                            this.visible = false;
+                            const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                            if (spriteDiv) {
+                                spriteDiv.style.display = 'none';
+                            }
+                            console.log(`${scratchRuntime.currentSprite} is now hidden`);
+                        },
+                        show: function() {
+                            this.visible = true;
+                            const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                            if (spriteDiv) {
+                                spriteDiv.style.display = 'block';
+                            }
+                            console.log(`${scratchRuntime.currentSprite} is now shown`);
+                        },
+                        changeSize: function(change) {
+                            this.size += change;
+                            const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                            if (spriteDiv) {
+                                spriteDiv.style.transform = `rotate(${this.direction - 90}deg) scale(${this.size/100})`;
+                            }
+                            console.log(`${scratchRuntime.currentSprite} size changed to ${this.size}%`);
+                        },
+                        setSize: function(size) {
+                            this.size = size;
+                            const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);
+                            if (spriteDiv) {
+                                spriteDiv.style.transform = `rotate(${this.direction - 90}deg) scale(${this.size/100})`;
+                            }
+                            console.log(`${scratchRuntime.currentSprite} size set to ${this.size}%`);
+                        }
+                    };
+
+                    // Register event handlers
+                    document.addEventListener('keydown', (e) => {
+                        const keyEvent = `keyPressed${e.key}`;
+                        if (this.events[keyEvent] && Array.isArray(this.events[keyEvent])) {
+                            this.events[keyEvent].forEach(callback => callback());
+                        }
+                    });
+
+                    // Create visual stage
+                    const stageDiv = document.getElementById('stage');
+                    if (stageDiv) {
+                        stageDiv.style.width = this.stage.width + 'px';
+                        stageDiv.style.height = this.stage.height + 'px';
+                        stageDiv.style.backgroundColor = this.stage.backgroundColor;
+                        stageDiv.style.position = 'relative';
+                        stageDiv.style.overflow = 'hidden';
+                        stageDiv.style.border = '2px solid black';
+
+                        // Create sprite element
+                        const spriteDiv = document.createElement('div');
+                        spriteDiv.id = 'sprite-Sprite1';
+                        spriteDiv.style.position = 'absolute';
+                        spriteDiv.style.width = '30px';
+                        spriteDiv.style.height = '30px';
+                        spriteDiv.style.backgroundColor = 'red';
+                        spriteDiv.style.borderRadius = '50%';
+                        spriteDiv.style.left = (this.sprites.Sprite1.x + this.stage.width/2) + 'px';
+                        spriteDiv.style.bottom = (this.sprites.Sprite1.y + this.stage.height/2) + 'px';
+                        spriteDiv.style.transform = 'rotate(0deg)';
+                        stageDiv.appendChild(spriteDiv);
+                    }
+                },
+
+                // Broadcasting system
+                broadcast: function(message) {
+                    console.log(`Broadcasting: ${message}`);
+                    if (this.broadcasts[message] && Array.isArray(this.broadcasts[message])) {
+                        this.broadcasts[message].forEach(callback => callback());
+                    }
+                },
+
+                // Register a broadcast receiver
+                onBroadcast: function(message, callback) {
+                    if (!this.broadcasts[message]) {
+                        this.broadcasts[message] = [];
+                    }
+                    this.broadcasts[message].push(callback);
+                },
+
+                // Register an event handler
+                onEvent: function(event, callback) {
+                    if (!this.events[event]) {
+                        this.events[event] = [];
+                    }
+                    this.events[event].push(callback);
+                },
+
+                // Ask a question and get an answer
+                ask: async function(question) {
+                    return new Promise((resolve) => {
+                        const askDiv = document.createElement('div');
+                        askDiv.id = 'ask-prompt';
+                        askDiv.style.position = 'absolute';
+                        askDiv.style.bottom = '10px';
+                        askDiv.style.left = '10px';
+                        askDiv.style.backgroundColor = 'white';
+                        askDiv.style.border = '2px solid black';
+                        askDiv.style.padding = '10px';
+                        askDiv.style.width = 'calc(100% - 40px)';
+                        askDiv.style.zIndex = '10';
+
+                        const questionText = document.createElement('div');
+                        questionText.textContent = question;
+                        askDiv.appendChild(questionText);
+
+                        const inputField = document.createElement('input');
+                        inputField.type = 'text';
+                        inputField.style.width = '100%';
+                        inputField.style.marginTop = '5px';
+                        askDiv.appendChild(inputField);
+
+                        const submitButton = document.createElement('button');
+                        submitButton.textContent = 'Answer';
+                        submitButton.style.marginTop = '5px';
+                        askDiv.appendChild(submitButton);
+
+                        submitButton.onclick = function() {
+                            scratchRuntime.answer = inputField.value;
+                            document.getElementById('stage').removeChild(askDiv);
+                            resolve(scratchRuntime.answer);
+                        };
+
+                        // Allow pressing Enter to submit
+                        inputField.addEventListener('keypress', function(e) {
+                            if (e.key === 'Enter') {
+                                submitButton.click();
+                            }
+                        });
+
+                        document.getElementById('stage').appendChild(askDiv);
+                        inputField.focus();
+                    });
+                }
+            };
+
+            // Initialize the runtime
+            scratchRuntime.init();
+
+            // Variables
+            // No variables defined
+
+            // Lists
+            // No lists defined
+
+            // Custom Procedures
+            // No procedures defined
+
+            // Scripts
+            // Script 1
+            // When green flag clicked
+            document.addEventListener('DOMContentLoaded', async function() {
+                // Repeat loop
+                for (let i = 0; i < 5; i++) {
+                    scratchRuntime.sprites[scratchRuntime.currentSprite].move(10);
+                    await new Promise(resolve => setTimeout(resolve, 1 * 1000));
+                }
+            });
+
+            // Repeat loop
+            for (let i = 0; i < 5; i++) {
+                scratchRuntime.sprites[scratchRuntime.currentSprite].move(10);
+                await new Promise(resolve => setTimeout(resolve, 1 * 1000));
+            }
+        </script>
+    </body>
+    </html>

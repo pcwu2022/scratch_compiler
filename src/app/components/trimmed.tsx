@@ -4,18 +4,15 @@ import React, { useState, useRef, useEffect } from 'react';
 import Editor, { useMonaco } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import { initialCode, languageDef, languageSelector } from '@/lib/codeEditorConfig';
-import { data } from 'autoprefixer';
 
 export default function CodeEditor() {
     const [code, setCode] = useState<string>(initialCode);
-    const [compiledJsCode, setCompiledJsCode] = useState<string | null>(null);
+    const [result, setResult] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [compiled, setCompiled] = useState(false);
     const [running, setRunning] = useState(false);
     const [terminalOutput, setTerminalOutput] = useState('');
     const [compiledResult, setCompiledResult] = useState<string | null>(null);
-    const [htmlContent, setHtmlContent] = useState<string | null>(null);
-    const [showHtml, setShowHtml] = useState(false);
 
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
     const monacoInstance = useMonaco();
@@ -33,9 +30,6 @@ export default function CodeEditor() {
 
             // Register javascript for output highlighting
             monacoInstance.languages.register({ id: 'javascript' });
-            
-            // Register HTML for preview
-            monacoInstance.languages.register({ id: 'html' });
         }
     }, [monacoInstance]);
 
@@ -73,15 +67,12 @@ export default function CodeEditor() {
         
     }
 
-    const handleCompile = async (): Promise<string> => {
+    const handleCompile = async () => {
         saveCode();
         setLoading(true);
-        setCompiledJsCode(null);
+        setResult(null);
         setTerminalOutput('');
         setCompiledResult(null);
-        setHtmlContent(null);
-
-        let retValue = "";
 
         try {
             const response = await fetch('/api/compile', {
@@ -97,46 +88,37 @@ export default function CodeEditor() {
             }
 
             const data = await response.json();
-            setCompiledJsCode(data.js);
+            setResult(data.js);
+            // setTerminalOutput('')
             setCompiledResult(data.js || null);
-            setHtmlContent(data.html || null);
-            console.log(data.js);
-            console.log(data.html);
-            retValue = data.js;
         } catch (error) {
             console.error('Error compiling:', error);
-            setCompiledJsCode('Compilation failed.');
+            setResult('Compilation failed.');
             setTerminalOutput(String(error));
         } finally {
             setLoading(false);
             setCompiled(true);
         }
-
-        return retValue;
     };
 
     const handleRun = async () => {
         saveCode();
         setRunning(true);
-        let code = compiledJsCode;
         if (!compiled){
-            code = await handleCompile();
+            await handleCompile();
         }
-        if (!code){
-            setRunning(false);
+        if (!result){
             return;
         }
-        setShowHtml(true);
-        await runResult(code);
+        await runResult(result);
         setRunning(false);
     };
 
     return (
-        <div className="Body-Main h-screen relative">
-            <div className="Body-Header bg-gray-800 p-4 flex justify-between items-center">
+        <div className="h-screen flex flex-col">
+            <div className="bg-gray-800 p-4 flex justify-between items-center">
                 <h1 className="text-white font-bold">Scratch Compiler</h1>
                 <div>
-                    <span className='ml-4'></span>
                     <button
                         onClick={handleRun}
                         disabled={running}
@@ -159,89 +141,61 @@ export default function CodeEditor() {
                 </div>
             </div>
 
-            <div className="Body-Interface relative h-3/4">
-                {/* Left panel - Code editor */}
-                <div className={`Code-Editor h-full ${(showHtml && htmlContent) ? "w-1/2 inline-block align-top " : "w-full "}`}>
-                    <Editor
-                        width="100%"
-                        height="100%"
-                        language="scratchSyntax"
-                        theme="vs-dark"
-                        value={code}
-                        options={{
-                            selectOnLineNumbers: true,
-                            roundedSelection: false,
-                            readOnly: false,
-                            cursorStyle: 'line',
-                            automaticLayout: true,
-                        }}
-                        onChange={(value) => {
-                            setCompiled(false);
-                            saveCode();
-                            setCode(value || '');
-                        }}
-                        onMount={handleEditorDidMount}
-                    />
+            <div className="flex flex-1">
+                <div className="bg-gray-700 w-48 p-4 flex flex-col">
+                    <button className="bg-gray-600 hover:bg-gray-500 text-white p-2 rounded mb-2">File</button>
+                    <button className="bg-gray-600 hover:bg-gray-500 text-white p-2 rounded mb-2">Edit</button>
+                    <button className="bg-gray-600 hover:bg-gray-500 text-white p-2 rounded mb-2">View</button>
                 </div>
 
-                {/* Right panel - HTML Preview */}
-                {showHtml && htmlContent && (
-                    <div className="w-1/2 h-full inline-block align-top">
-                        {/* <div className="bg-gray-800 p-4">
-                            <h2 className="text-white font-bold">HTML Preview</h2>
-                        </div> */}
-                        <div className="w-full h-full">
-                            <div className="w-full h-full bg-white overflow-auto">
-                                <iframe 
-                                    srcDoc={htmlContent}
-                                    className="w-full h-full border-0"
-                                    title="HTML Preview"
-                                    sandbox="allow-scripts"
-                                />
-                            </div>
-                            {/* <div className="bg-gray-900 p-4">
-                                <h2 className="text-white font-bold">HTML Source</h2>
-                                <div className="border p-2 rounded">
-                                    <Editor
-                                        width="100%"
-                                        height="300px"
-                                        language="html"
-                                        theme="vs-dark"
-                                        value={htmlContent}
-                                        options={{
-                                            readOnly: true,
-                                            automaticLayout: true,
-                                        }}
-                                    />
-                                </div>
-                            </div> */}
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            <div className="bg-gray-800 p-4 max-h-1/4 overflow-auto">
-                <h2 className="text-white font-bold">Terminal Output</h2>
-                <pre id="terminal" className="text-gray-300 whitespace-pre-wrap">{terminalOutput}</pre>
-            </div>
-            {compiledResult && (
-                <div className="bg-gray-900 p-4">
-                    <h2 className="text-white font-bold">Result</h2>
-                    <div className="border p-2 rounded">
+                <div className="flex-1 flex flex-col">
+                    <div className="flex-1">
                         <Editor
                             width="100%"
-                            height="300px"
-                            language="javascript" // Highlight as javascript
+                            height="100%"
+                            language="scratchSyntax"
                             theme="vs-dark"
-                            value={compiledResult}
+                            value={code}
                             options={{
-                                readOnly: true,
+                                selectOnLineNumbers: true,
+                                roundedSelection: false,
+                                readOnly: false,
+                                cursorStyle: 'line',
                                 automaticLayout: true,
                             }}
+                            onChange={(value) => {
+                                setCompiled(false);
+                                saveCode();
+                                setCode(value || '');
+                            }}
+                            onMount={handleEditorDidMount}
                         />
                     </div>
+
+                    <div className="bg-gray-800 p-4">
+                        <h2 className="text-white font-bold">Terminal Output</h2>
+                        <pre id="terminal" className="text-gray-300 whitespace-pre-wrap">{terminalOutput}</pre>
+                    </div>
+                    {compiledResult && (
+                        <div className="bg-gray-900 p-4">
+                            <h2 className="text-white font-bold">Result</h2>
+                            <div className="border p-2 rounded">
+                                <Editor
+                                    width="100%"
+                                    height="300px"
+                                    language="javascript" // Highlight as javascript
+                                    theme="vs-dark"
+                                    value={compiledResult}
+                                    options={{
+                                        readOnly: true,
+                                        automaticLayout: true,
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
     );
 }

@@ -532,6 +532,11 @@ export class CodeGenerator {
             this.write(`scratchRuntime.broadcast(${message});\n`);
             this.write(`await new Promise(resolve => setTimeout(resolve, 100));\n`);
         }
+
+        // Process next block if it exists
+        if (block.next) {
+            this.generateBlockCode(block.next);
+        }
     }
 
     /**
@@ -629,6 +634,11 @@ export class CodeGenerator {
             default:
                 this.write(`// Unsupported motion block: ${block.name}\n`);
         }
+
+        // Process next block if it exists
+        if (block.next) {
+            this.generateBlockCode(block.next);
+        }
     }
 
     /**
@@ -679,6 +689,11 @@ export class CodeGenerator {
             default:
                 this.write(`// Unsupported looks block: ${block.name}\n`);
         }
+
+        // Process next block if it exists
+        if (block.next) {
+            this.generateBlockCode(block.next);
+        }
     }
 
     /**
@@ -710,6 +725,11 @@ export class CodeGenerator {
             default:
                 this.write(`// Unsupported sound block: ${block.name}\n`);
         }
+
+        // Process next block if it exists
+        if (block.next) {
+            this.generateBlockCode(block.next);
+        }
     }
 
     /**
@@ -720,6 +740,11 @@ export class CodeGenerator {
             case 'wait':
                 const seconds = this.formatArg(block.args[0]);
                 this.write(`await new Promise(resolve => setTimeout(resolve, ${seconds} * 1000));\n`);
+                
+                // Process next block if it exists
+                if (block.next) {
+                    this.generateBlockCode(block.next);
+                }
                 break;
             case 'repeat':
                 const count = this.formatArg(block.args[0]);
@@ -727,27 +752,42 @@ export class CodeGenerator {
                 this.write(`for (let i = 0; i < ${count}; i++) {\n`);
                 this.indent++;
                 
-                // Generate code for the connected blocks inside the loop
-                if (block.next) {
-                    this.generateBlockCode(block.next);
+                // Generate code for the blocks inside the loop body
+                // Bug fix: Process the nested block in args[1] instead of block.next
+                if (block.args.length > 1 && typeof block.args[1] === 'object') {
+                    const nestedBlock = block.args[1] as BlockNode;
+                    this.generateBlockCode(nestedBlock);
+                    
+                    // The previous fix didn't properly process nested blocks with their own "next" chains
+                    // This is no longer needed as we're now handling the entire chain in generateBlockCode
                 }
                 
                 this.indent--;
                 this.write(`}\n`);
+                
+                // Process the next block after the repeat block if it exists
+                if (block.next) {
+                    this.generateBlockCode(block.next);
+                }
                 break;
             case 'forever':
                 this.write(`// Forever loop (using setInterval for browser compatibility)\n`);
                 this.write(`(async function forever() {\n`);
                 this.indent++;
                 
-                // Generate code for the connected blocks inside the loop
-                if (block.next) {
-                    this.generateBlockCode(block.next);
+                // Bug fix: Process the nested block in args[0] instead of block.next
+                if (block.args.length > 0 && typeof block.args[0] === 'object') {
+                    this.generateBlockCode(block.args[0] as BlockNode);
                 }
                 
                 this.write(`setTimeout(forever, 10); // Small delay to prevent UI freezing\n`);
                 this.indent--;
                 this.write(`})();\n`);
+                
+                // Process the next block if it exists
+                if (block.next) {
+                    this.generateBlockCode(block.next);
+                }
                 break;
             case 'if':
                 const condition = this.formatArg(block.args[0]);
@@ -755,13 +795,18 @@ export class CodeGenerator {
                 this.write(`if (${condition}) {\n`);
                 this.indent++;
                 
-                // Generate code for the connected blocks inside the if statement
-                if (block.next) {
-                    this.generateBlockCode(block.next);
+                // Bug fix: Process the nested block in args[1] instead of block.next
+                if (block.args.length > 1 && typeof block.args[1] === 'object') {
+                    this.generateBlockCode(block.args[1] as BlockNode);
                 }
                 
                 this.indent--;
                 this.write(`}\n`);
+                
+                // Process the next block if it exists
+                if (block.next) {
+                    this.generateBlockCode(block.next);
+                }
                 break;
             case 'ifElse':
                 const ifCondition = this.formatArg(block.args[0]);
@@ -788,6 +833,11 @@ export class CodeGenerator {
                 
                 this.indent--;
                 this.write(`}\n`);
+                
+                // Process the next block if it exists
+                if (block.next) {
+                    this.generateBlockCode(block.next);
+                }
                 break;
             case 'waitUntil':
                 const waitCondition = this.formatArg(block.args[0]);
@@ -810,6 +860,11 @@ export class CodeGenerator {
                 this.write(`checkCondition();\n`);
                 this.indent--;
                 this.write(`});\n`);
+                
+                // Process the next block if it exists
+                if (block.next) {
+                    this.generateBlockCode(block.next);
+                }
                 break;
             case 'repeatUntil':
                 const repeatCondition = this.formatArg(block.args[0]);
@@ -817,15 +872,20 @@ export class CodeGenerator {
                 this.write(`while (!(${repeatCondition})) {\n`);
                 this.indent++;
                 
-                // Generate code for the connected blocks inside the loop
-                if (block.next) {
-                    this.generateBlockCode(block.next);
+                // Bug fix: Process the nested block in args[1] instead of block.next
+                if (block.args.length > 1 && typeof block.args[1] === 'object') {
+                    this.generateBlockCode(block.args[1] as BlockNode);
                 }
                 
                 // Add a small delay to prevent browser from freezing
                 this.write(`await new Promise(resolve => setTimeout(resolve, 10));\n`);
                 this.indent--;
                 this.write(`}\n`);
+                
+                // Process the next block if it exists
+                if (block.next) {
+                    this.generateBlockCode(block.next);
+                }
                 break;
             case 'stop':
                 const target = block.args[0];
@@ -948,6 +1008,11 @@ export class CodeGenerator {
                 break;
             default:
                 this.write(`// Unsupported sensing block: ${block.name}\n`);
+        }
+
+        // Process next block if it exists
+        if (block.next) {
+            this.generateBlockCode(block.next);
         }
     }
 
@@ -1152,6 +1217,11 @@ export class CodeGenerator {
                 this.write(`(scratchRuntime.lists["${containsListName}"] ? scratchRuntime.lists["${containsListName}"].includes(${containsItem}) : false)`);
             default:
                 this.write(`// Unsupported variables block: ${block.name}\n`);
+        }
+        
+        // Process next block if it exists
+        if (block.next) {
+            this.generateBlockCode(block.next);
         }
     }
 
