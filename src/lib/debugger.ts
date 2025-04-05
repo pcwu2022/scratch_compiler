@@ -14,6 +14,21 @@ interface LogEntry {
     timestamp: string;
     context?: any;
 }
+
+class SimpleDebugger {
+    private enabled: boolean;
+    constructor(enabled: boolean = true){
+        this.enabled = enabled;
+    }
+    debug(...args: any[]) {
+        if (this.enabled) {
+            console.log(...args);
+        }
+    }
+    enable(enabled: boolean = true) {
+        this.enabled = enabled;
+    }
+}
   
 class Debugger {
     private options: DebugOptions;
@@ -100,3 +115,4 @@ class Debugger {
 }
   
 export default Debugger;
+export { SimpleDebugger };

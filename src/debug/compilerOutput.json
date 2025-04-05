@@ -1,0 +1,163 @@
+[
+  {
+    "level": "info",
+    "message": "Lexer output (tokens) ",
+    "timestamp": "2025-04-05T05:13:14.937Z",
+    "context": [
+      {
+        "type": "KEYWORD",
+        "value": "when",
+        "line": 1,
+        "column": 1
+      },
+      {
+        "type": "IDENTIFIER",
+        "value": "flagClicked",
+        "line": 1,
+        "column": 6
+      },
+      {
+        "type": "NEWLINE",
+        "value": "\n",
+        "line": 1,
+        "column": 16
+      },
+      {
+        "type": "INDENT",
+        "value": "    ",
+        "line": 2,
+        "column": 1
+      },
+      {
+        "type": "KEYWORD",
+        "value": "repeat",
+        "line": 2,
+        "column": 5
+      },
+      {
+        "type": "NUMBER",
+        "value": "5",
+        "line": 2,
+        "column": 12
+      },
+      {
+        "type": "NEWLINE",
+        "value": "\n",
+        "line": 2,
+        "column": 12
+      },
+      {
+        "type": "INDENT",
+        "value": "    ",
+        "line": 3,
+        "column": 5
+      },
+      {
+        "type": "KEYWORD",
+        "value": "move",
+        "line": 3,
+        "column": 9
+      },
+      {
+        "type": "NUMBER",
+        "value": "10",
+        "line": 3,
+        "column": 14
+      },
+      {
+        "type": "NEWLINE",
+        "value": "\n",
+        "line": 3,
+        "column": 15
+      },
+      {
+        "type": "KEYWORD",
+        "value": "wait",
+        "line": 4,
+        "column": 9
+      },
+      {
+        "type": "NUMBER",
+        "value": "1",
+        "line": 4,
+        "column": 14
+      },
+      {
+        "type": "NEWLINE",
+        "value": "\n",
+        "line": 4,
+        "column": 14
+      },
+      {
+        "type": "DEDENT",
+        "value": "",
+        "line": 5,
+        "column": 1
+      },
+      {
+        "type": "DEDENT",
+        "value": "",
+        "line": 5,
+        "column": 1
+      },
+      {
+        "type": "EOF",
+        "value": "",
+        "line": 5,
+        "column": 1
+      }
+    ]
+  },
+  {
+    "level": "info",
+    "message": "Parser output (program) ",
+    "timestamp": "2025-04-05T05:13:14.937Z",
+    "context": {
+      "scripts": [
+        {
+          "blocks": [
+            {
+              "type": "event",
+              "name": "when",
+              "args": [
+                "flagClicked"
+              ],
+              "next": {
+                "type": "control",
+                "name": "repeat",
+                "args": [
+                  5,
+                  {
+                    "type": "motion",
+                    "name": "move",
+                    "args": [
+                      10
+                    ],
+                    "next": {
+                      "type": "control",
+                      "name": "wait",
+                      "args": [
+                        1
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "variables": {},
+      "lists": {}
+    }
+  },
+  {
+    "level": "info",
+    "message": "Generator output (jsCode) ",
+    "timestamp": "2025-04-05T05:13:14.938Z",
+    "context": {
+      "js": "// Generated Scratch-like JavaScript code\n// Runtime support functions\nconst scratchRuntime = {\n    sprites: {},\n    stage: { width: 480, height: 360 },\n    currentSprite: 'Sprite1',\n    variables: {},\n    lists: {},\n    procedures: {},\n    events: {},\n    answer: '',\n    broadcasts: {},\n    init: function() {\n        // Initialize stage\n        this.stage = {\n            width: 480,\n            height: 360,\n            backgroundColor: '#ffffff',\n            tempo: 60,\n            volume: 100\n        };\n\n        // Initialize default sprite\n        this.sprites.Sprite1 = {\n            x: 0,\n            y: 0,\n            direction: 90,\n            costumes: ['default'],\n            currentCostume: 0,\n            visible: true,\n            size: 100,\n            effects: { color: 0, fisheye: 0, whirl: 0, pixelate: 0, mosaic: 0, brightness: 0, ghost: 0 },\n            say: function(message, seconds) {\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                const sayDiv = document.getElementById('say-bubble');\n                if (!sayDiv) {\n                    const newSayDiv = document.createElement('div');\n                    newSayDiv.id = 'say-bubble';\n                    newSayDiv.style.position = 'absolute';\n                    newSayDiv.style.backgroundColor = 'white';\n                    newSayDiv.style.border = '2px solid black';\n                    newSayDiv.style.borderRadius = '10px';\n                    newSayDiv.style.padding = '5px';\n                    newSayDiv.style.top = '50px';\n                    newSayDiv.style.left = '150px';\n                    newSayDiv.textContent = message;\n                    document.getElementById('stage').appendChild(newSayDiv);\n                } else {\n                    sayDiv.textContent = message;\n                    sayDiv.style.display = 'block';\n                }\n                console.log(`${scratchRuntime.currentSprite} says: ${message}`);\n                if (seconds) {\n                    setTimeout(() => {\n                        const sayDiv = document.getElementById('say-bubble');\n                        if (sayDiv) sayDiv.style.display = 'none';\n                        console.log(`${scratchRuntime.currentSprite} stopped saying`);\n                    }, seconds * 1000);\n                }\n            },\n            move: function(steps) {\n                const radians = this.direction * Math.PI / 180;\n                this.x += steps * Math.cos(radians);\n                this.y += steps * Math.sin(radians);\n                \n                // Update sprite position in the DOM\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.left = (this.x + scratchRuntime.stage.width/2) + 'px';\n                    spriteDiv.style.bottom = (this.y + scratchRuntime.stage.height/2) + 'px';\n                }\n                console.log(`${scratchRuntime.currentSprite} moved to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n            },\n            turnRight: function(degrees) {\n                this.direction = (this.direction + degrees) % 360;\n                console.log(`${scratchRuntime.currentSprite} turned right ${degrees} degrees to ${this.direction} degrees`);\n                // Update sprite rotation in the DOM\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.transform = `rotate(${this.direction - 90}deg)`;\n                }\n            },\n            turnLeft: function(degrees) {\n                this.direction = (this.direction - degrees) % 360;\n                if (this.direction < 0) this.direction += 360;\n                console.log(`${scratchRuntime.currentSprite} turned left ${degrees} degrees to ${this.direction} degrees`);\n                // Update sprite rotation in the DOM\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.transform = `rotate(${this.direction - 90}deg)`;\n                }\n            },\n            pointInDirection: function(direction) {\n                this.direction = direction % 360;\n                if (this.direction < 0) this.direction += 360;\n                console.log(`${scratchRuntime.currentSprite} now pointing in direction ${this.direction} degrees`);\n                // Update sprite rotation in the DOM\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.transform = `rotate(${this.direction - 90}deg)`;\n                }\n            },\n            goTo: function(x, y) {\n                this.x = x;\n                this.y = y;\n                // Update sprite position in the DOM\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.left = (this.x + scratchRuntime.stage.width/2) + 'px';\n                    spriteDiv.style.bottom = (this.y + scratchRuntime.stage.height/2) + 'px';\n                }\n                console.log(`${scratchRuntime.currentSprite} went to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n            },\n            goToSprite: function(spriteName) {\n                if (scratchRuntime.sprites[spriteName]) {\n                    this.x = scratchRuntime.sprites[spriteName].x;\n                    this.y = scratchRuntime.sprites[spriteName].y;\n                    // Update sprite position in the DOM\n                    const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                    if (spriteDiv) {\n                        spriteDiv.style.left = (this.x + scratchRuntime.stage.width/2) + 'px';\n                        spriteDiv.style.bottom = (this.y + scratchRuntime.stage.height/2) + 'px';\n                    }\n                    console.log(`${scratchRuntime.currentSprite} went to ${spriteName} at (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n                }\n            },\n            hide: function() {\n                this.visible = false;\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.display = 'none';\n                }\n                console.log(`${scratchRuntime.currentSprite} is now hidden`);\n            },\n            show: function() {\n                this.visible = true;\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.display = 'block';\n                }\n                console.log(`${scratchRuntime.currentSprite} is now shown`);\n            },\n            changeSize: function(change) {\n                this.size += change;\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.transform = `rotate(${this.direction - 90}deg) scale(${this.size/100})`;\n                }\n                console.log(`${scratchRuntime.currentSprite} size changed to ${this.size}%`);\n            },\n            setSize: function(size) {\n                this.size = size;\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.transform = `rotate(${this.direction - 90}deg) scale(${this.size/100})`;\n                }\n                console.log(`${scratchRuntime.currentSprite} size set to ${this.size}%`);\n            }\n        };\n\n        // Register event handlers\n        document.addEventListener('keydown', (e) => {\n            const keyEvent = `keyPressed${e.key}`;\n            if (this.events[keyEvent] && Array.isArray(this.events[keyEvent])) {\n                this.events[keyEvent].forEach(callback => callback());\n            }\n        });\n\n        // Create visual stage\n        const stageDiv = document.getElementById('stage');\n        if (stageDiv) {\n            stageDiv.style.width = this.stage.width + 'px';\n            stageDiv.style.height = this.stage.height + 'px';\n            stageDiv.style.backgroundColor = this.stage.backgroundColor;\n            stageDiv.style.position = 'relative';\n            stageDiv.style.overflow = 'hidden';\n            stageDiv.style.border = '2px solid black';\n\n            // Create sprite element\n            const spriteDiv = document.createElement('div');\n            spriteDiv.id = 'sprite-Sprite1';\n            spriteDiv.style.position = 'absolute';\n            spriteDiv.style.width = '30px';\n            spriteDiv.style.height = '30px';\n            spriteDiv.style.backgroundColor = 'red';\n            spriteDiv.style.borderRadius = '50%';\n            spriteDiv.style.left = (this.sprites.Sprite1.x + this.stage.width/2) + 'px';\n            spriteDiv.style.bottom = (this.sprites.Sprite1.y + this.stage.height/2) + 'px';\n            spriteDiv.style.transform = 'rotate(0deg)';\n            stageDiv.appendChild(spriteDiv);\n        }\n    },\n\n    // Broadcasting system\n    broadcast: function(message) {\n        console.log(`Broadcasting: ${message}`);\n        if (this.broadcasts[message] && Array.isArray(this.broadcasts[message])) {\n            this.broadcasts[message].forEach(callback => callback());\n        }\n    },\n\n    // Register a broadcast receiver\n    onBroadcast: function(message, callback) {\n        if (!this.broadcasts[message]) {\n            this.broadcasts[message] = [];\n        }\n        this.broadcasts[message].push(callback);\n    },\n\n    // Register an event handler\n    onEvent: function(event, callback) {\n        if (!this.events[event]) {\n            this.events[event] = [];\n        }\n        this.events[event].push(callback);\n    },\n\n    // Ask a question and get an answer\n    ask: async function(question) {\n        return new Promise((resolve) => {\n            const askDiv = document.createElement('div');\n            askDiv.id = 'ask-prompt';\n            askDiv.style.position = 'absolute';\n            askDiv.style.bottom = '10px';\n            askDiv.style.left = '10px';\n            askDiv.style.backgroundColor = 'white';\n            askDiv.style.border = '2px solid black';\n            askDiv.style.padding = '10px';\n            askDiv.style.width = 'calc(100% - 40px)';\n            askDiv.style.zIndex = '10';\n\n            const questionText = document.createElement('div');\n            questionText.textContent = question;\n            askDiv.appendChild(questionText);\n\n            const inputField = document.createElement('input');\n            inputField.type = 'text';\n            inputField.style.width = '100%';\n            inputField.style.marginTop = '5px';\n            askDiv.appendChild(inputField);\n\n            const submitButton = document.createElement('button');\n            submitButton.textContent = 'Answer';\n            submitButton.style.marginTop = '5px';\n            askDiv.appendChild(submitButton);\n\n            submitButton.onclick = function() {\n                scratchRuntime.answer = inputField.value;\n                document.getElementById('stage').removeChild(askDiv);\n                resolve(scratchRuntime.answer);\n            };\n\n            // Allow pressing Enter to submit\n            inputField.addEventListener('keypress', function(e) {\n                if (e.key === 'Enter') {\n                    submitButton.click();\n                }\n            });\n\n            document.getElementById('stage').appendChild(askDiv);\n            inputField.focus();\n        });\n    }\n};\n\n// Initialize the runtime\nscratchRuntime.init();\n\n// Variables\n// No variables defined\n\n// Lists\n// No lists defined\n\n// Custom Procedures\n// No procedures defined\n\n// Scripts\n// Script 1\n// When green flag clicked\ndocument.addEventListener('DOMContentLoaded', async function() {\n    // Repeat loop\n    for (let i = 0; i < 5; i++) {\n    }\n});\n\n\n",
+      "html": "<!DOCTYPE html>\n    <html lang=\"en\">\n    <head>\n        <meta charset=\"UTF-8\">\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n        <title>Scratch-like JavaScript Program</title>\n        <style>\n            body {\n                font-family: Arial, sans-serif;\n                margin: 0;\n                padding: 20px;\n                background-color: #f0f0f0;\n            }\n            \n            .container {\n                display: flex;\n                flex-direction: column;\n                align-items: center;\n            }\n            \n            .controls {\n                margin-bottom: 10px;\n                display: flex;\n                gap: 10px;\n            }\n            \n            button {\n                padding: 10px 15px;\n                background-color: #4CAF50;\n                color: white;\n                border: none;\n                border-radius: 4px;\n                cursor: pointer;\n            }\n            \n            button:hover {\n                background-color: #45a049;\n            }\n            \n            #stage {\n                background-color: white;\n                border: 2px solid #333;\n                position: relative;\n                overflow: hidden;\n            }\n            \n            #console {\n                width: 480px;\n                height: 200px;\n                margin-top: 20px;\n                border: 1px solid #ccc;\n                padding: 10px;\n                overflow-y: auto;\n                font-family: monospace;\n                background-color: white;\n            }\n        </style>\n    </head>\n    <body>\n        <div class=\"container\">\n            <h1>Scratch-like JavaScript Program</h1>\n            <div class=\"controls\">\n                <button id=\"start-button\">Green Flag (Start)</button>\n                <button id=\"stop-button\">Stop</button>\n                <button id=\"reset-button\">Reset</button>\n            </div>\n            <div id=\"stage\"></div>\n            <div id=\"console\"></div>\n        </div>\n\n        <script>\n            // Console logging override to display in our custom console\n            const originalConsoleLog = console.log;\n            console.log = function() {\n                // Call the original console.log\n                originalConsoleLog.apply(console, arguments);\n                \n                // Display in our custom console\n                const consoleDiv = document.getElementById('console');\n                if (consoleDiv) {\n                    const message = Array.from(arguments).join(' ');\n                    const logLine = document.createElement('div');\n                    logLine.textContent = message;\n                    consoleDiv.appendChild(logLine);\n                    consoleDiv.scrollTop = consoleDiv.scrollHeight;\n                }\n            };\n            \n            // Setup controls\n            document.getElementById('start-button').addEventListener('click', function() {\n                // Trigger the green flag event\n                const event = new Event('DOMContentLoaded');\n                document.dispatchEvent(event);\n            });\n            \n            document.getElementById('stop-button').addEventListener('click', function() {\n                // For a real implementation, you would need a way to stop all running scripts\n                console.log('Program stopped');\n            });\n            \n            document.getElementById('reset-button').addEventListener('click', function() {\n                // Reload the page to reset everything\n                location.reload();\n            });\n            \n            // Generated program code\n            // Generated Scratch-like JavaScript code\n// Runtime support functions\nconst scratchRuntime = {\n    sprites: {},\n    stage: { width: 480, height: 360 },\n    currentSprite: 'Sprite1',\n    variables: {},\n    lists: {},\n    procedures: {},\n    events: {},\n    answer: '',\n    broadcasts: {},\n    init: function() {\n        // Initialize stage\n        this.stage = {\n            width: 480,\n            height: 360,\n            backgroundColor: '#ffffff',\n            tempo: 60,\n            volume: 100\n        };\n\n        // Initialize default sprite\n        this.sprites.Sprite1 = {\n            x: 0,\n            y: 0,\n            direction: 90,\n            costumes: ['default'],\n            currentCostume: 0,\n            visible: true,\n            size: 100,\n            effects: { color: 0, fisheye: 0, whirl: 0, pixelate: 0, mosaic: 0, brightness: 0, ghost: 0 },\n            say: function(message, seconds) {\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                const sayDiv = document.getElementById('say-bubble');\n                if (!sayDiv) {\n                    const newSayDiv = document.createElement('div');\n                    newSayDiv.id = 'say-bubble';\n                    newSayDiv.style.position = 'absolute';\n                    newSayDiv.style.backgroundColor = 'white';\n                    newSayDiv.style.border = '2px solid black';\n                    newSayDiv.style.borderRadius = '10px';\n                    newSayDiv.style.padding = '5px';\n                    newSayDiv.style.top = '50px';\n                    newSayDiv.style.left = '150px';\n                    newSayDiv.textContent = message;\n                    document.getElementById('stage').appendChild(newSayDiv);\n                } else {\n                    sayDiv.textContent = message;\n                    sayDiv.style.display = 'block';\n                }\n                console.log(`${scratchRuntime.currentSprite} says: ${message}`);\n                if (seconds) {\n                    setTimeout(() => {\n                        const sayDiv = document.getElementById('say-bubble');\n                        if (sayDiv) sayDiv.style.display = 'none';\n                        console.log(`${scratchRuntime.currentSprite} stopped saying`);\n                    }, seconds * 1000);\n                }\n            },\n            move: function(steps) {\n                const radians = this.direction * Math.PI / 180;\n                this.x += steps * Math.cos(radians);\n                this.y += steps * Math.sin(radians);\n                \n                // Update sprite position in the DOM\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.left = (this.x + scratchRuntime.stage.width/2) + 'px';\n                    spriteDiv.style.bottom = (this.y + scratchRuntime.stage.height/2) + 'px';\n                }\n                console.log(`${scratchRuntime.currentSprite} moved to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n            },\n            turnRight: function(degrees) {\n                this.direction = (this.direction + degrees) % 360;\n                console.log(`${scratchRuntime.currentSprite} turned right ${degrees} degrees to ${this.direction} degrees`);\n                // Update sprite rotation in the DOM\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.transform = `rotate(${this.direction - 90}deg)`;\n                }\n            },\n            turnLeft: function(degrees) {\n                this.direction = (this.direction - degrees) % 360;\n                if (this.direction < 0) this.direction += 360;\n                console.log(`${scratchRuntime.currentSprite} turned left ${degrees} degrees to ${this.direction} degrees`);\n                // Update sprite rotation in the DOM\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.transform = `rotate(${this.direction - 90}deg)`;\n                }\n            },\n            pointInDirection: function(direction) {\n                this.direction = direction % 360;\n                if (this.direction < 0) this.direction += 360;\n                console.log(`${scratchRuntime.currentSprite} now pointing in direction ${this.direction} degrees`);\n                // Update sprite rotation in the DOM\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.transform = `rotate(${this.direction - 90}deg)`;\n                }\n            },\n            goTo: function(x, y) {\n                this.x = x;\n                this.y = y;\n                // Update sprite position in the DOM\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.left = (this.x + scratchRuntime.stage.width/2) + 'px';\n                    spriteDiv.style.bottom = (this.y + scratchRuntime.stage.height/2) + 'px';\n                }\n                console.log(`${scratchRuntime.currentSprite} went to (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n            },\n            goToSprite: function(spriteName) {\n                if (scratchRuntime.sprites[spriteName]) {\n                    this.x = scratchRuntime.sprites[spriteName].x;\n                    this.y = scratchRuntime.sprites[spriteName].y;\n                    // Update sprite position in the DOM\n                    const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                    if (spriteDiv) {\n                        spriteDiv.style.left = (this.x + scratchRuntime.stage.width/2) + 'px';\n                        spriteDiv.style.bottom = (this.y + scratchRuntime.stage.height/2) + 'px';\n                    }\n                    console.log(`${scratchRuntime.currentSprite} went to ${spriteName} at (${Math.floor(this.x)}, ${Math.floor(this.y)})`);\n                }\n            },\n            hide: function() {\n                this.visible = false;\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.display = 'none';\n                }\n                console.log(`${scratchRuntime.currentSprite} is now hidden`);\n            },\n            show: function() {\n                this.visible = true;\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.display = 'block';\n                }\n                console.log(`${scratchRuntime.currentSprite} is now shown`);\n            },\n            changeSize: function(change) {\n                this.size += change;\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.transform = `rotate(${this.direction - 90}deg) scale(${this.size/100})`;\n                }\n                console.log(`${scratchRuntime.currentSprite} size changed to ${this.size}%`);\n            },\n            setSize: function(size) {\n                this.size = size;\n                const spriteDiv = document.getElementById(`sprite-${scratchRuntime.currentSprite}`);\n                if (spriteDiv) {\n                    spriteDiv.style.transform = `rotate(${this.direction - 90}deg) scale(${this.size/100})`;\n                }\n                console.log(`${scratchRuntime.currentSprite} size set to ${this.size}%`);\n            }\n        };\n\n        // Register event handlers\n        document.addEventListener('keydown', (e) => {\n            const keyEvent = `keyPressed${e.key}`;\n            if (this.events[keyEvent] && Array.isArray(this.events[keyEvent])) {\n                this.events[keyEvent].forEach(callback => callback());\n            }\n        });\n\n        // Create visual stage\n        const stageDiv = document.getElementById('stage');\n        if (stageDiv) {\n            stageDiv.style.width = this.stage.width + 'px';\n            stageDiv.style.height = this.stage.height + 'px';\n            stageDiv.style.backgroundColor = this.stage.backgroundColor;\n            stageDiv.style.position = 'relative';\n            stageDiv.style.overflow = 'hidden';\n            stageDiv.style.border = '2px solid black';\n\n            // Create sprite element\n            const spriteDiv = document.createElement('div');\n            spriteDiv.id = 'sprite-Sprite1';\n            spriteDiv.style.position = 'absolute';\n            spriteDiv.style.width = '30px';\n            spriteDiv.style.height = '30px';\n            spriteDiv.style.backgroundColor = 'red';\n            spriteDiv.style.borderRadius = '50%';\n            spriteDiv.style.left = (this.sprites.Sprite1.x + this.stage.width/2) + 'px';\n            spriteDiv.style.bottom = (this.sprites.Sprite1.y + this.stage.height/2) + 'px';\n            spriteDiv.style.transform = 'rotate(0deg)';\n            stageDiv.appendChild(spriteDiv);\n        }\n    },\n\n    // Broadcasting system\n    broadcast: function(message) {\n        console.log(`Broadcasting: ${message}`);\n        if (this.broadcasts[message] && Array.isArray(this.broadcasts[message])) {\n            this.broadcasts[message].forEach(callback => callback());\n        }\n    },\n\n    // Register a broadcast receiver\n    onBroadcast: function(message, callback) {\n        if (!this.broadcasts[message]) {\n            this.broadcasts[message] = [];\n        }\n        this.broadcasts[message].push(callback);\n    },\n\n    // Register an event handler\n    onEvent: function(event, callback) {\n        if (!this.events[event]) {\n            this.events[event] = [];\n        }\n        this.events[event].push(callback);\n    },\n\n    // Ask a question and get an answer\n    ask: async function(question) {\n        return new Promise((resolve) => {\n            const askDiv = document.createElement('div');\n            askDiv.id = 'ask-prompt';\n            askDiv.style.position = 'absolute';\n            askDiv.style.bottom = '10px';\n            askDiv.style.left = '10px';\n            askDiv.style.backgroundColor = 'white';\n            askDiv.style.border = '2px solid black';\n            askDiv.style.padding = '10px';\n            askDiv.style.width = 'calc(100% - 40px)';\n            askDiv.style.zIndex = '10';\n\n            const questionText = document.createElement('div');\n            questionText.textContent = question;\n            askDiv.appendChild(questionText);\n\n            const inputField = document.createElement('input');\n            inputField.type = 'text';\n            inputField.style.width = '100%';\n            inputField.style.marginTop = '5px';\n            askDiv.appendChild(inputField);\n\n            const submitButton = document.createElement('button');\n            submitButton.textContent = 'Answer';\n            submitButton.style.marginTop = '5px';\n            askDiv.appendChild(submitButton);\n\n            submitButton.onclick = function() {\n                scratchRuntime.answer = inputField.value;\n                document.getElementById('stage').removeChild(askDiv);\n                resolve(scratchRuntime.answer);\n            };\n\n            // Allow pressing Enter to submit\n            inputField.addEventListener('keypress', function(e) {\n                if (e.key === 'Enter') {\n                    submitButton.click();\n                }\n            });\n\n            document.getElementById('stage').appendChild(askDiv);\n            inputField.focus();\n        });\n    }\n};\n\n// Initialize the runtime\nscratchRuntime.init();\n\n// Variables\n// No variables defined\n\n// Lists\n// No lists defined\n\n// Custom Procedures\n// No procedures defined\n\n// Scripts\n// Script 1\n// When green flag clicked\ndocument.addEventListener('DOMContentLoaded', async function() {\n    // Repeat loop\n    for (let i = 0; i < 5; i++) {\n    }\n});\n\n\n\n        </script>\n    </body>\n    </html>"
+    }
+  }
+]

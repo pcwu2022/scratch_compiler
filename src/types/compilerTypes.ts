@@ -53,3 +53,28 @@ export type {
     Script,
     Program
 }
+
+export const blockTypeMap: Record<string, BlockType> = {
+    // Events
+    'when': 'event', 'broadcast': 'event', 'receive': 'event',
+    // Motion
+    'move': 'motion', 'turn': 'motion', 'goto': 'motion', 
+    'glide': 'motion', 'point': 'motion', 'direction': 'motion',
+    // Looks
+    'say': 'looks', 'think': 'looks', 'show': 'looks', 
+    'hide': 'looks', 'switch': 'looks',
+    // Sound
+    'play': 'sound', 'stop': 'sound',
+    // Control
+    'wait': 'control', 'repeat': 'control', 'forever': 'control', 
+    'if': 'control', 'else': 'control', 'until': 'control', 'while': 'control',
+    // Sensing
+    'ask': 'sensing', 'touching': 'sensing', 'key': 'sensing', 'mouse': 'sensing',
+    // Variables
+    'set': 'variables', 'change': 'variables',
+    // Operators
+    'join': 'operators', 'letter': 'operators', 'mod': 'operators',
+    'round': 'operators', 'abs': 'operators', 'sqrt': 'operators',
+    // Pen
+    'pen': 'pen', 'stamp': 'pen'
+};

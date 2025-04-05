@@ -16,7 +16,7 @@ export class ScratchTextCompiler {
             enabled: true,
             logLevels: ['info', 'warn', 'error'],
             saveToFile: true,
-            filePath: 'src/app/debug/compilerOutput.json',
+            filePath: 'src/debug/compilerOutput.json',
         });
     }
     // compile: Main method that takes Scratch-like text code as input and returns JavaScript code.

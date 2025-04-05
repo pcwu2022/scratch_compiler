@@ -3,7 +3,10 @@
 // an Abstract Syntax Tree (AST). The AST represents the structure of the program,
 // making it easier to analyze and execute.
 
-import { Program, BlockNode, Script, BlockType, Token, TokenType } from "@/types/compilerTypes";
+import { Program, BlockNode, Script, BlockType, Token, TokenType, blockTypeMap } from "@/types/compilerTypes";
+import { SimpleDebugger } from "./debugger";
+
+const d: SimpleDebugger = new SimpleDebugger();
 
 export class Parser {
     // Array of tokens to be parsed.
@@ -170,6 +173,8 @@ export class Parser {
     }
 
     // parseScriptBlocks: Parse all blocks in a script after the first block
+    // parseScriptBlocks: Parse all blocks in a script after the first block
+    // parseScriptBlocks: Parse all blocks in a script after the first block
     private parseScriptBlocks(script: Script): void {
         // Continue parsing blocks until we reach the end of the script
         while (!this.isAtEnd()) {
@@ -188,15 +193,43 @@ export class Parser {
                 }
                 
                 const parentBlock = this.blockStack[this.blockStack.length - 1];
-                const nestedBlock = this.parseBlock();
                 
-                if (nestedBlock) {
-                    // For blocks like 'if', 'repeat', etc., the nested blocks should be added to args
-                    if (['if', 'repeat', 'forever', 'until', 'while'].includes(parentBlock.name)) {
-                        // For blocks that can have nested blocks, store them in args
-                        parentBlock.args.push(nestedBlock);
-                    } else {
-                        // For other blocks, set the nested block as the next block
+                // For control blocks that can have nested blocks
+                if (['if', 'repeat', 'forever', 'until', 'while'].includes(parentBlock.name)) {
+                    // Create a sequence of blocks at this indentation level
+                    const firstNestedBlock = this.parseBlock();
+                    if (firstNestedBlock) {
+                        // Add the first nested block as an argument
+                        parentBlock.args.push(firstNestedBlock);
+                        
+                        // Parse subsequent blocks at this indentation level
+                        let currentBlock = firstNestedBlock;
+                        
+                        // Track blocks at this indentation level
+                        while (!this.isAtEnd() && !this.match(TokenType.DEDENT)) {
+                            this.skipIrrelevant();
+                            
+                            if (this.isAtEnd() || this.match(TokenType.DEDENT)) {
+                                break;
+                            }
+                            
+                            if (this.isBlockStart()) {
+                                const nextBlock = this.parseBlock();
+                                if (nextBlock) {
+                                    // Connect blocks with 'next'
+                                    currentBlock.next = nextBlock;
+                                    currentBlock = nextBlock;
+                                }
+                            } else {
+                                this.advance();
+                            }
+                        }
+                    }
+                } else {
+                    // For other blocks, handle nested blocks normally
+                    const nestedBlock = this.parseBlock();
+                    
+                    if (nestedBlock) {
                         if (!parentBlock.next) {
                             parentBlock.next = nestedBlock;
                         } else {
@@ -207,14 +240,17 @@ export class Parser {
                             }
                             lastBlock.next = nestedBlock;
                         }
+                        
+                        // Push this block to track indentation level
+                        this.blockStack.push(nestedBlock);
                     }
                 }
             } else if (this.match(TokenType.DEDENT)) {
                 this.indentLevel--;
                 this.advance();
                 
-                // Pop the last block from the stack
-                if (this.blockStack.length > 0) {
+                // Pop the last block from the stack if we're at a deeper level
+                if (this.blockStack.length > 1) {
                     this.blockStack.pop();
                 }
                 
@@ -240,9 +276,14 @@ export class Parser {
                             }
                             lastBlock.next = block;
                         }
+                        
+                        // Replace the last block in the stack with this new one
+                        this.blockStack.pop();
+                        this.blockStack.push(block);
                     } else {
                         // This is a top-level block in the script
                         script.blocks.push(block);
+                        this.blockStack.push(block);
                     }
                 }
             } else {
@@ -329,31 +370,6 @@ export class Parser {
     // determineBlockType: Determine the type of block based on its keyword
     private determineBlockType(keyword: string): BlockType {
         // Maps common Scratch block keywords to their respective types
-        const blockTypeMap: Record<string, BlockType> = {
-            // Events
-            'when': 'event', 'broadcast': 'event', 'receive': 'event',
-            // Motion
-            'move': 'motion', 'turn': 'motion', 'goto': 'motion', 
-            'glide': 'motion', 'point': 'motion', 'direction': 'motion',
-            // Looks
-            'say': 'looks', 'think': 'looks', 'show': 'looks', 
-            'hide': 'looks', 'switch': 'looks',
-            // Sound
-            'play': 'sound', 'stop': 'sound',
-            // Control
-            'wait': 'control', 'repeat': 'control', 'forever': 'control', 
-            'if': 'control', 'else': 'control', 'until': 'control', 'while': 'control',
-            // Sensing
-            'ask': 'sensing', 'touching': 'sensing', 'key': 'sensing', 'mouse': 'sensing',
-            // Variables
-            'set': 'variables', 'change': 'variables',
-            // Operators
-            'join': 'operators', 'letter': 'operators', 'mod': 'operators',
-            'round': 'operators', 'abs': 'operators', 'sqrt': 'operators',
-            // Pen
-            'pen': 'pen', 'stamp': 'pen'
-        };
-        
         return blockTypeMap[keyword] || 'custom';
     }
 
